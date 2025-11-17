@@ -31,6 +31,7 @@ public interface CustomerMapper {
     // ======= Entity TO RESPONSE-DTO
 
     @Mapping(source = "listSize" , target = "totalOrders")
+    @Mapping(target = "createdAt", source = "createdAt")
     CustomerResponseDTO toResponseDTO(Customer customer);
 
     // ======== ADDRESS ENTITY MAPPING ======

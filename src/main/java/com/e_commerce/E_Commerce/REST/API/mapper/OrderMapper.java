@@ -39,7 +39,6 @@ public interface OrderMapper {
     void updateEntityFromDTO(OrderUpdateRequestDTO requestDTO, @MappingTarget Order order);
 
 
-    @Mapping(source = "customer", target = "customer")
     @Mapping(source = "orderItems", target = "orderItems")
     @Mapping(source = "payment", target = "payment")
     OrderResponseDTO toResponseDTO(Order order);
@@ -47,7 +46,7 @@ public interface OrderMapper {
 
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "product.name", target = "productName")
-    @Mapping(source = "product.imageUrl", target = "imageUrl")
+    @Mapping(source = "product.imgUrl", target = "imageUrl")
     OrderItemResponseDTO toOrderItemResponseDTO(OrderItem orderItem);
 
     PaymentResponseDTO toPaymentResponseDTO(Payment payment);
