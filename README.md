@@ -242,24 +242,6 @@ Content-Type: application/json
 
 ---
 
-## ⚠️ Known Issues
-
-### 🔴 Critical
-
-| Issue | Location | Description |
-|:------|:---------|:------------|
-| Broken method | `model/Customer.java` | `getListSize()` has typo and incorrect implementation |
-| Wrong annotation | `controller/OrderController.java` | Uses `@Controller` instead of `@RestController` |
-| Incorrect annotations | `repository/OrderRepository.java` | `@Service` and `@Transactional` on interface |
-
-### 🟡 Minor
-
-| Issue | Location | Description |
-|:------|:---------|:------------|
-| Debug code | `controller/CustomerController.java` | `System.out.println` should use logger |
-| Unused imports | `ECommerceRestApiApplication.java` | Code cleanup needed |
-| CORS config | `controller/CustomerController.java` | Currently allows all origins |
-
 <br/>
 
 ---
