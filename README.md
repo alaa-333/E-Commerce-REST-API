@@ -84,7 +84,7 @@ This REST API provides a complete backend solution for e-commerce platforms, fea
 ### Prerequisites
 
 ```
-☑️ Java 17+     ☑️ Maven 3.6+     ☑️ Oracle Database     ☑️ Your favorite IDE
+☑️ Java 17+     ☑️ Maven 3.6+     ☑️ Oracle Database     ☑️ intellij
 ```
 
 ### Installation
