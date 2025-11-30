@@ -6,7 +6,7 @@ public class DuplicateResourceException extends BusinessException{
 
     public DuplicateResourceException(ErrorCode errorCode, String resource , Object identifier)
     {
-        super(errorCode, HttpStatus.CONFLICT, formatMessage(resource, identifier));
+        super(errorCode, errorCode.getHttpStatus(), formatMessage(resource, identifier));
     }
 
     public DuplicateResourceException(String resource , Object identifier)
@@ -14,6 +14,11 @@ public class DuplicateResourceException extends BusinessException{
         this(ErrorCode.RESOURCE_NOT_FOUND, resource, identifier);
     }
 
+
+    private static String formatMessage(String resource, Object identifier)
+    {
+        return "%s is already exist with identifier: %s ".formatted(resource,identifier);
+    }
 
 
     // factory methods

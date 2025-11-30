@@ -1,8 +1,10 @@
-package com.e_commerce.E_Commerce.REST.API.exception;
+package com.e_commerce.E_Commerce.REST.API.exception.product;
 
+import com.e_commerce.E_Commerce.REST.API.exception.BusinessException;
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
-public class ProductOutOfStockException extends BusinessException{
+public class ProductOutOfStockException extends BusinessException {
 
     public ProductOutOfStockException(String productName)
     {

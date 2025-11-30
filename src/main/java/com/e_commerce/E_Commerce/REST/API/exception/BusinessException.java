@@ -15,6 +15,8 @@ public abstract class BusinessException extends RuntimeException {
     private final HttpStatus httpStatus;
     private final String detailsMessage;
 
+
+
     // base constructor
 
     protected BusinessException(ErrorCode errorCode, HttpStatus httpStatus)

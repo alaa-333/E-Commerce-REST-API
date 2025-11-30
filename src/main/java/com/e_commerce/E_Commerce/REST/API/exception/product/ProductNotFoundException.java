@@ -1,8 +1,11 @@
-package com.e_commerce.E_Commerce.REST.API.exception;
+package com.e_commerce.E_Commerce.REST.API.exception.product;
 
+import com.e_commerce.E_Commerce.REST.API.exception.BusinessException;
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
+import com.e_commerce.E_Commerce.REST.API.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 
-public class ProductNotFoundException extends BusinessException{
+public class ProductNotFoundException  extends ResourceNotFoundException {
 
     public ProductNotFoundException(Object identifier)
     {

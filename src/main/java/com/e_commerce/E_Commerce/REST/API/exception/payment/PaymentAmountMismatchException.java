@@ -1,10 +1,12 @@
-package com.e_commerce.E_Commerce.REST.API.exception;
+package com.e_commerce.E_Commerce.REST.API.exception.payment;
 
+import com.e_commerce.E_Commerce.REST.API.exception.BusinessException;
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 
-public class PaymentAmountMismatchException extends BusinessException{
+public class PaymentAmountMismatchException extends BusinessException {
 
     public PaymentAmountMismatchException(BigDecimal expected, BigDecimal actual)
     {

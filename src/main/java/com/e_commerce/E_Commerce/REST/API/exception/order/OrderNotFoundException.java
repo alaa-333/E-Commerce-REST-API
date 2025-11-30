@@ -1,8 +1,11 @@
-package com.e_commerce.E_Commerce.REST.API.exception;
+package com.e_commerce.E_Commerce.REST.API.exception.order;
 
+import com.e_commerce.E_Commerce.REST.API.exception.BusinessException;
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
+import com.e_commerce.E_Commerce.REST.API.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 
-public class OrderNotFoundException extends BusinessException{
+public class OrderNotFoundException  extends ResourceNotFoundException {
 
     public OrderNotFoundException(Object identifier)
     {

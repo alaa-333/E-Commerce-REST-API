@@ -1,6 +1,15 @@
 package com.e_commerce.E_Commerce.REST.API.exception;
 
+import com.e_commerce.E_Commerce.REST.API.exception.customer.CustomerInactiveException;
+import com.e_commerce.E_Commerce.REST.API.exception.customer.CustomerNotFoundException;
+import com.e_commerce.E_Commerce.REST.API.exception.order.OrderAlreadyProcessedException;
+import com.e_commerce.E_Commerce.REST.API.exception.order.OrderNotFoundException;
+import com.e_commerce.E_Commerce.REST.API.exception.payment.PaymentAmountMismatchException;
+import com.e_commerce.E_Commerce.REST.API.exception.product.InsufficientStockException;
+import com.e_commerce.E_Commerce.REST.API.exception.product.ProductNotFoundException;
+import com.e_commerce.E_Commerce.REST.API.exception.product.ProductOutOfStockException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -8,41 +17,26 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandling {
 
     /*
         ResourceNotFoundException
      */
-    @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleCustomerNotFoundException(CustomerNotFoundException ex , HttpServletRequest request)
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex ,
+                                                                         HttpServletRequest request)
     {
-        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body
-                (
-                         ErrorResponse.of(ex.getErrorCode().getCode(), ex.getMessage(),HttpStatus.NOT_FOUND.value(), request.getRequestURI())
-                );
-    }
-
-    @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleOrderNotFoundException(OrderNotFoundException ex , HttpServletRequest request)
-    {
-        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body
-                (
-                        ErrorResponse.of(ex.getErrorCode().getCode(), ex.getMessage(),HttpStatus.NOT_FOUND.value(), request.getRequestURI())
-                );
-    }
-
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleProductNotFoundException(ProductNotFoundException ex , HttpServletRequest request)
-    {
-        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body
-                (
-                        ErrorResponse.of(ex.getErrorCode().getCode(), ex.getMessage(),HttpStatus.NOT_FOUND.value(), request.getRequestURI())
-                );
+        return  ResponseEntity.status(ex.getHttpStatus())
+                .body(ErrorResponse.of(
+                        ex.getErrorCode().getCode(),
+                        ex.getMessage(),
+                        HttpStatus.NOT_FOUND.value(),
+                        request.getRequestURI()
+                        ));
     }
 
 
@@ -52,21 +46,24 @@ public class GlobalExceptionHandling {
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResourceFoundEx(DuplicateResourceException ex, HttpServletRequest request)
     {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body( ErrorResponse.of
-                (
+        return ResponseEntity.status(ex.getHttpStatus())
+                .body( ErrorResponse.of(
                         ex.getErrorCode().getCode(),
                         ex.getMessage(),
-                        HttpStatus.CONFLICT.value(),
+                        ex.getHttpStatus().value(),
                         request.getRequestURI()
 
                 ));
 
     }
 
-    @ExceptionHandler(CustomerInactiveException.class)
-    public ResponseEntity<ErrorResponse> handleCustomerInactiveException(CustomerInactiveException ex, HttpServletRequest request)
+    /*
+            Business Exceptions
+*/
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex, HttpServletRequest request)
     {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(ex.getHttpStatus())
                 .body(
                         ErrorResponse.of(
                                 ex.getErrorCode().getCode(),
@@ -77,63 +74,6 @@ public class GlobalExceptionHandling {
                 );
     }
 
-
-    @ExceptionHandler(ProductOutOfStockException.class)
-    public ResponseEntity<ErrorResponse> handleProductOutOfStockException(ProductOutOfStockException ex , HttpServletRequest request)
-    {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(
-                        ErrorResponse.of(
-                                ex.getErrorCode().getCode(),
-                                ex.getMessage(),
-                                HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                                request.getRequestURI()
-                        )
-                );
-    }
-
-    @ExceptionHandler(InsufficientStockException.class)
-    public ResponseEntity<ErrorResponse> handleInsufficientStockException(InsufficientStockException ex , HttpServletRequest request)
-    {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(
-                        ErrorResponse.of(ex.getErrorCode().getCode(),
-                                ex.getMessage(),
-                                HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                                request.getRequestURI()
-
-                        )
-                );
-    }
-
-    @ExceptionHandler(OrderAlreadyProcessedException.class)
-    public ResponseEntity<ErrorResponse> handleOrderAlreadyProcessedException(OrderAlreadyProcessedException ex , HttpServletRequest request)
-    {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(
-                        ErrorResponse.of(
-                                ex.getErrorCode().getCode(),
-                                ex.getMessage(),
-                                HttpStatus.CONFLICT.value(),
-                                request.getRequestURI()
-
-                        )
-                );
-    }
-
-    @ExceptionHandler (PaymentAmountMismatchException.class)
-    public ResponseEntity<ErrorResponse> handlePaymentAmountMismatchException(PaymentAmountMismatchException ex, HttpServletRequest request)
-    {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(
-                        ErrorResponse.of(
-                                ex.getErrorCode().getCode(),
-                                ex.getMessage(),
-                                HttpStatus.BAD_REQUEST.value(),
-                                request.getRequestURI()
-                        )
-                );
-    }
 
     /*
        MethodArgumentNotValidException @VALID
@@ -169,5 +109,23 @@ public class GlobalExceptionHandling {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+
+
+
+    /*
+        Catch-all for unexpected errors Generic Exception with logger
+ */
+    @ExceptionHandler(Exception.class) //
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
+        log.error("Unexpected error occurred at {}", request.getRequestURI(), ex); // Log stack trace
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ErrorResponse.of(
+                            ErrorCode.INTERNAL_SERVER_ERROR.getCode(),
+                            "An unexpected error occurred",
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            request.getRequestURI()
+                    ));
+        }
 
 }

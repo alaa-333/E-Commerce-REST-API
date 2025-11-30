@@ -1,8 +1,10 @@
-package com.e_commerce.E_Commerce.REST.API.exception;
+package com.e_commerce.E_Commerce.REST.API.exception.order;
 
+import com.e_commerce.E_Commerce.REST.API.exception.BusinessException;
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
-public class OrderAlreadyProcessedException extends BusinessException{
+public class OrderAlreadyProcessedException extends BusinessException {
 
     public OrderAlreadyProcessedException(String ordferNumber)
     {
