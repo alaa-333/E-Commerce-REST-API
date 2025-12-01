@@ -1,8 +1,9 @@
 <div align="center">
 
-<br/>
-
-<img src="https://img.icons8.com/fluency/96/shopping-cart.png" width="85"/>
+<picture>
+  <source media="(max-width: 480px)" srcset="https://img.icons8.com/fluency/64/shopping-cart.png">
+  <img src="https://img.icons8.com/fluency/96/shopping-cart.png" width="85" alt="E-Commerce API"/>
+</picture>
 
 <br/>
 
@@ -12,31 +13,47 @@
 
 <br/>
 
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
+
 [![Build Status](https://img.shields.io/badge/Build-In_Development-F4B400?style=for-the-badge&labelColor=2B2B2B)](/)
 [![Java](https://img.shields.io/badge/Java-17-E8E8E8?style=for-the-badge&logo=openjdk&logoColor=white&labelColor=ED8B00)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.7-E8E8E8?style=for-the-badge&logo=springboot&logoColor=white&labelColor=6DB33F)](https://spring.io/projects/spring-boot)
 [![Oracle](https://img.shields.io/badge/Oracle-Database-E8E8E8?style=for-the-badge&logo=oracle&logoColor=white&labelColor=F80000)](https://www.oracle.com/database/)
 
+</div>
+
 <br/>
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<details>
+<summary>📑 <b>Table of Contents</b></summary>
+
+- [Overview](#-overview)
+- [Technology Stack](#-technology-stack)
+- [Architecture](#-architecture)
+- [Implementation Status](#-implementation-status)
+- [Quick Start](#-quick-start)
+- [API Documentation](#-api-documentation)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+</details>
+
+<br/>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 <sub>
 
-*A production-ready RESTful API delivering comprehensive e-commerce functionality*
-*with customer management, product catalog, order processing, and payment integration.*
+*A production-ready RESTful API delivering comprehensive e-commerce functionality with customer management, product catalog, order processing, and payment integration.*
 
 </sub>
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-<br/>
-
-[Overview](#-overview) · [Architecture](#-architecture) · [Quick Start](#-quick-start) · [API Documentation](#-api-documentation) · [Roadmap](#-roadmap)
-
-<br/>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 </div>
+
+<br/>
 
 > **⚠️ Development Status**  
 > This project is under active development. Core features are functional and tested, while advanced features are being incrementally rolled out. The API contract may evolve during this phase.
@@ -51,47 +68,17 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 
 <br/>
 
+### Core Features
+
 <div align="center">
-<table>
-<tr>
-<td align="center" width="220">
-<br/>
-<img src="https://img.icons8.com/fluency/48/user.png" width="36"/>
-<br/><br/>
-<b>Customer Management</b>
-<br/>
-<sub>Complete CRUD operations<br/>with validation & search</sub>
-<br/><br/>
-</td>
-<td align="center" width="220">
-<br/>
-<img src="https://img.icons8.com/fluency/48/product.png" width="36"/>
-<br/><br/>
-<b>Product Catalog</b>
-<br/>
-<sub>Inventory management<br/>with stock tracking</sub>
-<br/><br/>
-</td>
-<td align="center" width="220">
-<br/>
-<img src="https://img.icons8.com/fluency/48/order-history.png" width="36"/>
-<br/><br/>
-<b>Order Processing</b>
-<br/>
-<sub>End-to-end order lifecycle<br/>with status tracking</sub>
-<br/><br/>
-</td>
-<td align="center" width="220">
-<br/>
-<img src="https://img.icons8.com/fluency/48/bank-card-back-side.png" width="36"/>
-<br/><br/>
-<b>Payment Integration</b>
-<br/>
-<sub>Stripe SDK with<br/>strategy pattern</sub>
-<br/><br/>
-</td>
-</tr>
-</table>
+
+| Feature | Description |
+|:--------|:------------|
+| 👤 **Customer Management** | Complete CRUD operations with validation & search |
+| 📦 **Product Catalog** | Inventory management with stock tracking |
+| 🛍️ **Order Processing** | End-to-end order lifecycle with status tracking |
+| 💳 **Payment Integration** | Stripe SDK with strategy pattern |
+
 </div>
 
 <br/>
@@ -102,10 +89,6 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 
 <br/>
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
 ### Core Framework
 
 | Component | Version | Purpose |
@@ -115,8 +98,7 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 | **Hibernate** | — | ORM implementation |
 | **Jakarta Validation** | — | Input validation |
 
-</td>
-<td width="50%" valign="top">
+<br/>
 
 ### Infrastructure
 
@@ -127,27 +109,14 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 | **Oracle Database** | — | Data storage |
 | **MapStruct** | 1.5.3 | Object mapping |
 
-</td>
-</tr>
-<tr>
-<td colspan="2">
+<br/>
 
 ### Additional Libraries
 
-<table width="100%">
-<tr>
-<td><b>Lombok</b></td>
-<td>Reduces boilerplate code with annotations</td>
-</tr>
-<tr>
-<td><b>Stripe Java SDK</b></td>
-<td>Payment processing integration (v24.0.0)</td>
-</tr>
-</table>
-
-</td>
-</tr>
-</table>
+| Library | Purpose |
+|:--------|:--------|
+| **Lombok** | Reduces boilerplate code with annotations |
+| **Stripe Java SDK** | Payment processing integration (v24.0.0) |
 
 <br/>
 
@@ -157,82 +126,90 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 
 ### System Design
 
-<div align="center">
+<details>
+<summary><b>🖥️ View System Architecture Diagram</b></summary>
+
+<br/>
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              REST API LAYER                                 │
-│   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
-│   │   Customer   │  │    Order     │  │   Product    │  │   Payment    │   │
-│   │  Controller  │  │  Controller  │  │  Controller  │  │  Controller  │   │
-│   └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘   │
-└──────────┼──────────────────┼──────────────────┼──────────────────┼──────────┘
-           │                  │                  │                  │
-           │                  │                  │                  │
-┌──────────┼──────────────────┼──────────────────┼──────────────────┼──────────┐
-│          ▼                  ▼                  ▼                  ▼          │
-│   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
-│   │   Customer   │  │    Order     │  │   Product    │  │   Payment    │   │
-│   │   Service    │  │   Service    │  │   Service    │  │   Service    │   │
-│   └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘   │
-│          │  SERVICE LAYER   │                  │                  │          │
-└──────────┼──────────────────┼──────────────────┼──────────────────┼──────────┘
-           │                  │                  │                  │
-           │                  │                  │                  │
-┌──────────┼──────────────────┼──────────────────┼──────────────────┼──────────┐
-│          ▼                  ▼                  ▼                  ▼          │
-│   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
-│   │   Customer   │  │    Order     │  │   Product    │  │   Payment    │   │
-│   │  Repository  │  │  Repository  │  │  Repository  │  │  Repository  │   │
-│   └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘   │
-│          │  DATA ACCESS     │                  │                  │          │
-└──────────┼──────────────────┼──────────────────┼──────────────────┼──────────┘
-           │                  │                  │                  │
-           └──────────────────┴──────────────────┴──────────────────┘
-                                       │
-                                       ▼
-                          ┌────────────────────────┐
-                          │   Oracle Database      │
-                          └────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                       REST API LAYER                          │
+│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐     │
+│   │Customer  │  │  Order   │  │ Product  │  │ Payment  │     │
+│   │Controller│  │Controller│  │Controller│  │Controller│     │
+│   └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘     │
+└────────┼─────────────┼─────────────┼─────────────┼───────────┘
+         │             │             │             │
+         │             │             │             │
+┌────────┼─────────────┼─────────────┼─────────────┼───────────┐
+│        ▼             ▼             ▼             ▼           │
+│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│   │Customer  │  │  Order   │  │ Product  │  │ Payment  │   │
+│   │ Service  │  │ Service  │  │ Service  │  │ Service  │   │
+│   └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘   │
+│        │  SERVICE     │             │             │         │
+└────────┼─────────────┼─────────────┼─────────────┼─────────┘
+         │             │             │             │
+         │             │             │             │
+┌────────┼─────────────┼─────────────┼─────────────┼─────────┐
+│        ▼             ▼             ▼             ▼         │
+│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │
+│   │Customer  │  │  Order   │  │ Product  │  │ Payment  │ │
+│   │Repository│  │Repository│  │Repository│  │Repository│ │
+│   └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘ │
+│        │  DATA ACCESS │             │             │       │
+└────────┼─────────────┼─────────────┼─────────────┼───────┘
+         │             │             │             │
+         └─────────────┴─────────────┴─────────────┘
+                            │
+                            ▼
+                 ┌──────────────────┐
+                 │Oracle Database   │
+                 └──────────────────┘
 ```
 
-</div>
+</details>
 
 <br/>
 
 ### Project Structure
+
+<details>
+<summary><b>📁 View Directory Structure</b></summary>
+
+<br/>
 
 ```
 E-Commerce-REST-API/
 │
 ├── src/main/java/com/e_commerce/E_Commerce/REST/API/
 │   │
-│   ├── controller/                    ◁ REST API Endpoints
+│   ├── controller/              ◁ REST API Endpoints
 │   │   ├── CustomerController.java
 │   │   ├── OrderController.java
 │   │   ├── ProductController.java
 │   │   └── PaymentController.java
 │   │
-│   ├── service/                       ◁ Business Logic Layer
+│   ├── service/                 ◁ Business Logic
 │   │   ├── CustomerService.java
 │   │   ├── OrderService.java
 │   │   ├── ProductService.java
-│   │   └── PaymentService.java        [In Progress]
+│   │   └── PaymentService.java  [In Progress]
 │   │
-│   ├── repository/                    ◁ Data Access Layer
+│   ├── repository/              ◁ Data Access
 │   │   ├── CustomerRepository.java
 │   │   ├── OrderRepository.java
 │   │   ├── ProductRepository.java
 │   │   └── PaymentRepository.java
 │   │
-│   ├── model/                         ◁ Domain Entities
+│   ├── model/                   ◁ Domain Entities
 │   │   ├── Customer.java
 │   │   ├── Order.java
 │   │   ├── OrderItem.java
 │   │   ├── Product.java
 │   │   └── Payment.java
 │   │
-│   ├── dto/                           ◁ Data Transfer Objects
+│   ├── dto/                     ◁ Transfer Objects
 │   │   ├── request/
 │   │   │   ├── CustomerRequest.java
 │   │   │   ├── OrderRequest.java
@@ -242,20 +219,20 @@ E-Commerce-REST-API/
 │   │       ├── OrderResponse.java
 │   │       └── ProductResponse.java
 │   │
-│   ├── mapper/                        ◁ DTO Converters
+│   ├── mapper/                  ◁ DTO Converters
 │   │   ├── CustomerMapper.java
 │   │   ├── OrderMapper.java
 │   │   └── ProductMapper.java
 │   │
-│   ├── payment/                       ◁ Payment Strategies
-│   │   ├── PaymentStrategy.java       [In Progress]
+│   ├── payment/                 ◁ Payment Strategies
+│   │   ├── PaymentStrategy.java
 │   │   ├── CreditCardPayment.java
 │   │   └── CashWalletPayment.java
 │   │
-│   ├── exception/                     ◁ Error Handling
-│   │   ├── GlobalExceptionHandler.java 
-│   │   ├── BusinessException.java      
-│   │   └── ErrorCode.java             
+│   ├── exception/               ◁ Error Handling
+│   │   ├── GlobalExceptionHandler.java
+│   │   ├── BusinessException.java
+│   │   └── ErrorCode.java
 │   │
 │   └── ECommerceRestApiApplication.java
 │
@@ -266,6 +243,8 @@ E-Commerce-REST-API/
 └── pom.xml
 ```
 
+</details>
+
 <br/>
 
 ---
@@ -274,56 +253,25 @@ E-Commerce-REST-API/
 
 <br/>
 
-<table>
-<tr>
-<td width="50%" valign="top">
+**✓ Production Ready**
 
-### ✓ Production Ready
+- Customer Management — Complete CRUD with email search
+- Product Catalog — Full inventory management
+- Order Processing — Order creation and status tracking
+- Order Items — Multi-item order support
+- Database Layer — Oracle integration with JPA
+- DTO Pattern — MapStruct implementation
+- Input Validation — Jakarta Validation
 
-- **Customer Management**  
-  Complete CRUD with email search
-  
-- **Product Catalog**  
-  Full inventory management
-  
-- **Order Processing**  
-  Order creation and status tracking
-  
-- **Order Items**  
-  Multi-item order support
-  
-- **Database Layer**  
-  Oracle integration with JPA
-  
-- **DTO Pattern**  
-  MapStruct implementation
-  
-- **Input Validation**  
-  Jakarta Validation
+<br/>
 
-</td>
-<td width="50%" valign="top">
+**⧗ In Development**
 
-### ⧗ In Development
-
-- **Payment Service**  
-  Stripe integration underway
-  
-- **Payment Strategies**  
-  Credit card & wallet support
-  
-- **Exception Handling**  
-  Global error management
-  
-- **Business Exceptions**  
-  Custom error types
-  
-- **Error Codes**  
-  Standardized error responses
-
-</td>
-</tr>
-</table>
+- Payment Service — Stripe integration underway
+- Payment Strategies — Credit card & wallet support
+- Exception Handling — Global error management
+- Business Exceptions — Custom error types
+- Error Codes — Standardized error responses
 
 <br/>
 
@@ -336,30 +284,22 @@ E-Commerce-REST-API/
 ### Prerequisites
 
 ```
-Java 17+          Oracle Database          Maven 3.6+          IDE (IntelliJ/Eclipse/VS Code)
+Java 17+     Oracle Database     Maven 3.6+     IDE
 ```
 
 <br/>
 
-### Installation & Setup
+### Installation Steps
 
-<table>
-<tr>
-<td width="40"><b>1</b></td>
-<td>
-
-**Clone Repository**
+**1. Clone Repository**
 ```bash
 git clone <repository-url>
 cd E-Commerce-REST-API
 ```
-</td>
-</tr>
-<tr>
-<td><b>2</b></td>
-<td>
 
-**Configure Database**
+<br/>
+
+**2. Configure Database**
 
 Edit `src/main/resources/application.yaml`:
 
@@ -378,31 +318,22 @@ spring:
 server:
   port: 8080
 ```
-</td>
-</tr>
-<tr>
-<td><b>3</b></td>
-<td>
 
-**Build Project**
+<br/>
+
+**3. Build Project**
 ```bash
 mvn clean install
 ```
-</td>
-</tr>
-<tr>
-<td><b>4</b></td>
-<td>
 
-**Run Application**
+<br/>
+
+**4. Run Application**
 ```bash
 mvn spring-boot:run
 ```
 
 API available at: `http://localhost:8080/api`
-</td>
-</tr>
-</table>
 
 <br/>
 
@@ -424,149 +355,45 @@ http://localhost:8080/api
 
 ### Customer Endpoints
 
-<table>
-<tr>
-<th width="80">Method</th>
-<th>Endpoint</th>
-<th>Description</th>
-<th width="80">Status</th>
-</tr>
-<tr>
-<td align="center"><code>POST</code></td>
-<td><code>/api/customers</code></td>
-<td>Register new customer</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/customers</code></td>
-<td>Retrieve all customers</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/customers/{id}</code></td>
-<td>Retrieve customer by ID</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/customers/email/{email}</code></td>
-<td>Retrieve customer by email</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>PUT</code></td>
-<td><code>/api/customers/{id}</code></td>
-<td>Update customer information</td>
-<td align="center">✓</td>
-</tr>
-</table>
+| Method | Endpoint | Description | Status |
+|:------:|:---------|:------------|:------:|
+| `POST` | `/api/customers` | Register new customer | ✓ |
+| `GET` | `/api/customers` | Retrieve all customers | ✓ |
+| `GET` | `/api/customers/{id}` | Retrieve customer by ID | ✓ |
+| `GET` | `/api/customers/email/{email}` | Retrieve customer by email | ✓ |
+| `PUT` | `/api/customers/{id}` | Update customer information | ✓ |
 
 <br/>
 
 ### Order Endpoints
 
-<table>
-<tr>
-<th width="80">Method</th>
-<th>Endpoint</th>
-<th>Description</th>
-<th width="80">Status</th>
-</tr>
-<tr>
-<td align="center"><code>POST</code></td>
-<td><code>/api/orders</code></td>
-<td>Create new order</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/orders</code></td>
-<td>Retrieve all orders</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/orders/customer/{customerId}</code></td>
-<td>Retrieve orders by customer</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/orders/status/{status}</code></td>
-<td>Retrieve orders by status</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>PATCH</code></td>
-<td><code>/api/orders/{id}/status</code></td>
-<td>Update order status</td>
-<td align="center">✓</td>
-</tr>
-</table>
+| Method | Endpoint | Description | Status |
+|:------:|:---------|:------------|:------:|
+| `POST` | `/api/orders` | Create new order | ✓ |
+| `GET` | `/api/orders` | Retrieve all orders | ✓ |
+| `GET` | `/api/orders/customer/{customerId}` | Retrieve orders by customer | ✓ |
+| `GET` | `/api/orders/status/{status}` | Retrieve orders by status | ✓ |
+| `PATCH` | `/api/orders/{id}/status` | Update order status | ✓ |
 
 <br/>
 
 ### Product Endpoints
 
-<table>
-<tr>
-<th width="80">Method</th>
-<th>Endpoint</th>
-<th>Description</th>
-<th width="80">Status</th>
-</tr>
-<tr>
-<td align="center"><code>POST</code></td>
-<td><code>/api/products</code></td>
-<td>Add new product</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/products</code></td>
-<td>Retrieve all products</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/products/{id}</code></td>
-<td>Retrieve product by ID</td>
-<td align="center">✓</td>
-</tr>
-<tr>
-<td align="center"><code>PUT</code></td>
-<td><code>/api/products/{id}</code></td>
-<td>Update product information</td>
-<td align="center">✓</td>
-</tr>
-</table>
+| Method | Endpoint | Description | Status |
+|:------:|:---------|:------------|:------:|
+| `POST` | `/api/products` | Add new product | ✓ |
+| `GET` | `/api/products` | Retrieve all products | ✓ |
+| `GET` | `/api/products/{id}` | Retrieve product by ID | ✓ |
+| `PUT` | `/api/products/{id}` | Update product information | ✓ |
 
 <br/>
 
 ### Payment Endpoints
 
-<table>
-<tr>
-<th width="80">Method</th>
-<th>Endpoint</th>
-<th>Description</th>
-<th width="80">Status</th>
-</tr>
-<tr>
-<td align="center"><code>POST</code></td>
-<td><code>/api/payments</code></td>
-<td>Process payment transaction</td>
-<td align="center">⧗</td>
-</tr>
-<tr>
-<td align="center"><code>GET</code></td>
-<td><code>/api/payments/{id}</code></td>
-<td>Retrieve payment by ID</td>
-<td align="center">⧗</td>
-</tr>
-</table>
+| Method | Endpoint | Description | Status |
+|:------:|:---------|:------------|:------:|
+| `POST` | `/api/payments` | Process payment transaction | ⧗ |
+| `GET` | `/api/payments/{id}` | Retrieve payment by ID | ⧗ |
 
 <br/>
 
@@ -594,6 +421,8 @@ Content-Type: application/json
   }
 }
 ```
+
+<br/>
 
 **Create Order Request**
 ```http
@@ -625,17 +454,13 @@ Content-Type: application/json
 
 <br/>
 
-<div align="center">
-
 **Development Progress**
 
-</div>
-
 ```
-Phase 1: Core Features          ███████████████░░░░░  75%
-Phase 2: Security & Quality     ████░░░░░░░░░░░░░░░░  20%
-Phase 3: Performance            ░░░░░░░░░░░░░░░░░░░░   0%
-Phase 4: Advanced Features      ░░░░░░░░░░░░░░░░░░░░   0%
+Phase 1: Core Features       ███████████████░░░░░  75%
+Phase 2: Security & Quality  ████░░░░░░░░░░░░░░░░  20%
+Phase 3: Performance         ░░░░░░░░░░░░░░░░░░░░   0%
+Phase 4: Advanced Features   ░░░░░░░░░░░░░░░░░░░░   0%
 ```
 
 <br/>
@@ -699,32 +524,13 @@ Phase 4: Advanced Features      ░░░░░░░░░░░░░░░░
 
 ## ▎Contributing
 
-<br/>
-
 We welcome contributions from the community. Please follow these guidelines:
 
-<table>
-<tr>
-<td width="40"><b>1</b></td>
-<td><b>Review Roadmap</b> — Familiarize yourself with planned features and current priorities</td>
-</tr>
-<tr>
-<td><b>2</b></td>
-<td><b>Address Known Issues</b> — Critical bugs take precedence over feature development</td>
-</tr>
-<tr>
-<td><b>3</b></td>
-<td><b>Follow Code Standards</b> — Maintain consistency with existing architecture patterns</td>
-</tr>
-<tr>
-<td><b>4</b></td>
-<td><b>Write Tests</b> — Include unit and integration tests for new functionality</td>
-</tr>
-<tr>
-<td><b>5</b></td>
-<td><b>Update Documentation</b> — Reflect changes in README and inline comments</td>
-</tr>
-</table>
+1. **Review Roadmap** — Familiarize yourself with planned features
+2. **Address Known Issues** — Critical bugs take precedence
+3. **Follow Code Standards** — Maintain consistency
+4. **Write Tests** — Include unit and integration tests
+5. **Update Documentation** — Reflect changes in README
 
 <br/>
 
@@ -752,7 +558,7 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 <div align="center">
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 <br/>
 
@@ -761,6 +567,7 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 **E-Commerce REST API** · Enterprise Backend Solution
 
 Developed by Alaa Mohamed
+
 </sub>
 
 <br/>
