@@ -43,11 +43,11 @@
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-<sub>
+<div>
 
-*A production-ready RESTful API delivering comprehensive e-commerce functionality with customer management, product catalog, order processing, and payment integration.*
+*A production-ready RESTful API delivering comprehensive e-commerce functionality <br/> with customer management, product catalog, order processing, and payment integration.*
 
-</sub>
+</div>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
