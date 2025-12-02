@@ -88,8 +88,10 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 ## ▎Technology Stack
 
 <br/>
+<div  align="center">
 
 ### Core Framework
+  <br/>
 
 | Component | Version | Purpose |
 |:----------|:-------:|:--------|
@@ -119,7 +121,7 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 | **Stripe Java SDK** | Payment processing integration (v24.0.0) |
 
 <br/>
-
+</div>
 ---
 
 ## ▎Architecture
@@ -130,7 +132,6 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 <summary><b>🖥️ View System Architecture Diagram</b></summary>
 
 <br/>
-
 ```
 ┌───────────────────────────────────────────────────────────────┐
 │                       REST API LAYER                          │
@@ -352,7 +353,7 @@ http://localhost:8080/api
 ```
 
 <br/>
-
+<div align="center">
 ### Customer Endpoints
 
 | Method | Endpoint | Description | Status |
@@ -394,6 +395,7 @@ http://localhost:8080/api
 |:------:|:---------|:------------|:------:|
 | `POST` | `/api/payments` | Process payment transaction | ⧗ |
 | `GET` | `/api/payments/{id}` | Retrieve payment by ID | ⧗ |
+</div>
 
 <br/>
 
@@ -445,6 +447,7 @@ Content-Type: application/json
 ```
 
 </details>
+
 
 <br/>
 
