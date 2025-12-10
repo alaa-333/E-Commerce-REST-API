@@ -1,6 +1,7 @@
 package com.e_commerce.E_Commerce.REST.API.mapper;
 
 import com.e_commerce.E_Commerce.REST.API.dto.request.OrderCreateRequestDTO;
+import com.e_commerce.E_Commerce.REST.API.dto.request.OrderItemCreateRequestDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.request.OrderUpdateRequestDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.OrderItemResponseDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.OrderResponseDTO;
@@ -9,13 +10,17 @@ import com.e_commerce.E_Commerce.REST.API.model.Order;
 import com.e_commerce.E_Commerce.REST.API.model.OrderItem;
 import com.e_commerce.E_Commerce.REST.API.model.Payment;
 import com.e_commerce.E_Commerce.REST.API.model.enums.OrderStatus;
+import com.e_commerce.E_Commerce.REST.API.service.OrderService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface OrderMapper {
 
     // ======== REQUEST TO ENTITY ======== /
@@ -39,8 +44,6 @@ public interface OrderMapper {
     void updateEntityFromDTO(OrderUpdateRequestDTO requestDTO, @MappingTarget Order order);
 
 
-    @Mapping(source = "orderItems", target = "orderItems")
-    @Mapping(source = "payment", target = "payment")
     OrderResponseDTO toResponseDTO(Order order);
 
 
@@ -53,27 +56,32 @@ public interface OrderMapper {
 
 
     default Order createNewOrder(OrderCreateRequestDTO requestDTO, String orderNumber) {
-        Order order = toEntity(requestDTO);
-        order.setOrderDate(LocalDateTime.now());
-        order.setOrderNumber(orderNumber);
-        order.setOrderStatus(OrderStatus.PENDING);
-        order.setTotalAmount(requestDTO.calculateTotalAmount());
+        Order order = toEntity(requestDTO); // create order after mapping into entity
+        order.setOrderNumber(orderNumber); // assign order number
+        order.setOrderStatus(OrderStatus.PENDING); // take default status
+        order.setTotalAmount(OrderService.calculateTotalAmount(requestDTO.getOrderItems()));
         return order;
     }
 
-    default void updateOrderFromDTO(OrderUpdateRequestDTO requestDTO, Order order) {
-        if (requestDTO == null || order == null) {
-            return;
-        }
 
-        // Update only provided fields
-        if (requestDTO.hasStatus()) {
-            try {
-                OrderStatus status = OrderStatus.valueOf(requestDTO.getOrderStatus().toUpperCase());
-                order.setOrderStatus(status);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid order status: " + requestDTO.getOrderStatus());
-            }
-        }
+
+
+
+    default OrderItem createOrderItem(OrderItemCreateRequestDTO requestDTO,Order order )
+    {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setQuantity(requestDTO.getQuantity());
+        orderItem.setUnitPrice(requestDTO.getUnitPrice());
+        orderItem.setOrder(order);
+        return orderItem;
+
+    }
+    default List<OrderItem> toOrderItemsEntities(List<OrderItemCreateRequestDTO> requestDTOS, Order order)
+    {
+        if (requestDTOS == null)
+                return List.of();
+
+
+        return requestDTOS.stream().map(dto -> createOrderItem(dto,order)).toList();
     }
 }

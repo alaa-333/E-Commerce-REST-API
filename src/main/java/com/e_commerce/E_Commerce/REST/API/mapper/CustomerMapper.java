@@ -7,74 +7,85 @@ import com.e_commerce.E_Commerce.REST.API.dto.response.AddressResponseDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.CustomerResponseDTO;
 import com.e_commerce.E_Commerce.REST.API.model.Address;
 import com.e_commerce.E_Commerce.REST.API.model.Customer;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+import java.util.List;
+import java.util.Optional;
+
+@Mapper(
+        componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
 public interface CustomerMapper {
 
     // ======== REQUEST TO ENTITY =========
-
-    @Mapping(target = "id" , ignore = true)
-    @Mapping(target = "createdAt" , ignore = true)
-    @Mapping(target = "orderList" , ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "orderList", ignore = true)
+    @Mapping(target = "address", source = "address")
     Customer toEntity(CustomerCreateRequestDTO requestDTO);
 
-    @Mapping(target = "id" , ignore = true)
-    @Mapping(target = "createdAt" , ignore = true)
-    @Mapping(target = "orderList" , ignore = true)
-    @Mapping(target = "email" , ignore = true)
-    void updateEntityFromDTO(CustomerUpdateReqDTO updateReqDTO , @MappingTarget Customer customer);
-
-
-    // ======= Entity TO RESPONSE-DTO
-
-    @Mapping(source = "listSize" , target = "totalOrders")
-    @Mapping(target = "createdAt", source = "createdAt")
+    // ======= ENTITY TO RESPONSE-DTO =======
+    @Mapping(
+            target = "totalOrders",
+            expression = "java(mapTotalOrders(customer))"
+    )
+    @Mapping(target = "address", source = "address")
     CustomerResponseDTO toResponseDTO(Customer customer);
 
-    // ======== ADDRESS ENTITY MAPPING ======
-
+    // ======== ADDRESS MAPPINGS ============
     Address toEntity(AddressRequestDTO requestDTO);
     AddressResponseDTO toResponseDTO(Address address);
 
+    // ======== PARTIAL UPDATE METHODS =======
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "orderList", ignore = true)
+    void updateEntityFromDTO(CustomerUpdateReqDTO reqDTO, @MappingTarget Customer customer);
 
-    // helper method for partial updates
-    default void updateCustomerFromDTO(CustomerUpdateReqDTO reqDTO , Customer customer)
-    {
-        if (reqDTO == null || customer == null)
-                return;
-
-        if (reqDTO.hasFirstName())
-            customer.setFirstName(reqDTO.getFirstName());
-
-        if (reqDTO.hasLastName())
-            customer.setLastName(reqDTO.getLastName());
-
-        if (reqDTO.hasPhone())
-            customer.setPhone(reqDTO.getPhone());
-
-        if (reqDTO.hasAddress())
-             updateAddressFromDTO(reqDTO.getAddress() , customer.getAddress());
-
+    // ======== CUSTOM MAPPING METHODS =======
+    default Integer mapTotalOrders(Customer customer) {
+        return Optional.ofNullable(customer.getOrderList())
+                .map(List::size)
+                .orElse(0);
     }
 
-    default void updateAddressFromDTO(AddressRequestDTO requestDTO , Address address)
-    {
-        if (requestDTO.getCity() != null && !requestDTO.getCity().isBlank())
-                address.setCity(requestDTO.getCity());
+    default void updateAddressFromDTO(AddressRequestDTO requestDTO, @MappingTarget Address address) {
+        if (requestDTO == null || address == null) {
+            return;
+        }
 
-        if (requestDTO.getCountry() != null && !requestDTO.getCountry().isBlank())
-                address.setCountry(requestDTO.getCountry());
-
-        if (requestDTO.getPostalCode() != null && !requestDTO.getPostalCode().isBlank())
-                address.setPostalCode(requestDTO.getPostalCode());
-
-        if (requestDTO.getStreet() != null && !requestDTO.getStreet().isBlank())
-                address.setStreet(requestDTO.getStreet());
-
+        Optional.ofNullable(requestDTO.getStreet())
+                .ifPresent(address::setStreet);
+        Optional.ofNullable(requestDTO.getCity())
+                .ifPresent(address::setCity);
+        Optional.ofNullable(requestDTO.getCountry())
+                .ifPresent(address::setCountry);
+        Optional.ofNullable(requestDTO.getPostalCode())
+                .ifPresent(address::setPostalCode);
     }
 
+    // ======== AFTER MAPPING CALLBACK =======
+    @AfterMapping
+    default void handleCustomerUpdate(
+            @MappingTarget Customer customer,
+            CustomerUpdateReqDTO reqDTO
+    ) {
+        if (reqDTO == null || customer == null) {
+            return;
+        }
+
+        // Handle address update if present in DTO
+        if (reqDTO.getAddress() != null) {
+            Address address = customer.getAddress();
+            if (address == null) {
+                address = new Address();
+                customer.setAddress(address);
+            }
+            updateAddressFromDTO(reqDTO.getAddress(), address);
+        }
+    }
 }
-

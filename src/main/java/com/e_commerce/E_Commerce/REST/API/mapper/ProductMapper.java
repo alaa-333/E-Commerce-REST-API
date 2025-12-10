@@ -7,44 +7,28 @@ import com.e_commerce.E_Commerce.REST.API.model.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ProductMapper {
 
     // ======== to Entity ==========
-
     @Mapping(target = "id" , ignore = true)
     @Mapping(target = "active" , ignore = true)
     @Mapping(target = "itemList" , ignore = true)
+    @Mapping(target = "createdAt" , ignore = true)
     Product toEntity(ProductCreateRequestDTO requestDTO);
+
+    // ===== entity to response Dto
+    @Mapping(target = "totalOrders", expression = "java(product.getItemList() != null ? product.getItemList().size() : 0)")
+    ProductResponseDTO toResponseDTO(Product product);
 
 
     @Mapping(target = "id" , ignore = true)
     @Mapping(target = "itemList" , ignore = true)
     void updateEntityFromDTO(ProductUpdateRequestDTO updateRequestDTO , @MappingTarget Product product);
 
-    // ===== entity to response Dto
-    @Mapping(source = "itemList" , target = "totalOrders")
-    ProductResponseDTO toResponseDTO(Product product);
 
-    // update only provided fields
-
-    default void updateProductFromDTO(ProductUpdateRequestDTO requestDTO , Product product)
-    {
-        if (requestDTO.hasName())
-                product.setName(requestDTO.getName());
-
-        if (requestDTO.hasDescription())
-                product.setDescription(requestDTO.getDescription());
-
-        if (requestDTO.hasActive())
-                product.setActive(requestDTO.getActive());
-
-        if (requestDTO.hasCategory())
-                product.setCategory(requestDTO.getCategory());
-
-        if (requestDTO.hasImgUrl())
-                product.setImgUrl(requestDTO.getImgUrl());
-    }
 
 }
