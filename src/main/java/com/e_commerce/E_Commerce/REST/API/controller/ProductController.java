@@ -1,8 +1,10 @@
 package com.e_commerce.E_Commerce.REST.API.controller;
 
 
+import com.e_commerce.E_Commerce.REST.API.dto.request.PaginationRequestDto;
 import com.e_commerce.E_Commerce.REST.API.dto.request.ProductCreateRequestDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.request.ProductUpdateRequestDTO;
+import com.e_commerce.E_Commerce.REST.API.dto.response.PaginationResponseDto;
 import com.e_commerce.E_Commerce.REST.API.dto.response.ProductResponseDTO;
 import com.e_commerce.E_Commerce.REST.API.service.ProductService;
 import jakarta.validation.Valid;
@@ -20,7 +22,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/v1/products")
 @Validated
 public class ProductController {
 
@@ -45,7 +47,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ProductResponseDTO updateProduct(
+    public ResponseEntity<ProductResponseDTO> updateProduct(
             @Valid @RequestBody ProductUpdateRequestDTO requestDTO,
             @PathVariable("id")
             @NotNull(message = "id must be not null")
@@ -53,13 +55,15 @@ public class ProductController {
             Long id
             )
     {
-        return productService.updateProduct(requestDTO,id);
+        return ResponseEntity.ok(productService.updateProduct(requestDTO,id));
     }
 
     @GetMapping
-    public List<ProductResponseDTO> getAll()
+    public PaginationResponseDto<ProductResponseDTO> getAll(
+            @Valid PaginationRequestDto requestDto
+            )
     {
-        return productService.getAll();
+        return productService.getAll(requestDto);
     }
 
     @DeleteMapping("{id}")
@@ -74,22 +78,35 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
-    public List<ProductResponseDTO> filteredProductsByPrice(
+    @GetMapping("/price")
+    public PaginationResponseDto<ProductResponseDTO> filteredProductsByPrice(
             @RequestParam("minPrice") @PositiveOrZero BigDecimal min,
-            @RequestParam("maxPrice") @Positive BigDecimal max
+            @RequestParam("maxPrice") @Positive BigDecimal max,
+            @Valid PaginationRequestDto requestDto
     )
     {
         return productService
-                .getByRangePrice(min, max);
+                .getByRangePrice(min, max , requestDto);
     }
-    @GetMapping("/search")
-    public List<ProductResponseDTO> filteredProductsByName(
-            @RequestParam @NotNull(message = "name must be not null") String name
+
+
+    @GetMapping("/name")
+    public PaginationResponseDto<ProductResponseDTO> filteredProductsByName(
+            @RequestParam @NotNull(message = "name must be not null") String name,
+            @Valid PaginationRequestDto requestDto
     )
     {
         return productService
-                .getProductsByName(name);
+                .getProductsByName(name ,requestDto);
+    }
+
+    @GetMapping("/category")
+    public PaginationResponseDto<ProductResponseDTO> getByCategory(
+            @RequestParam @NotNull(message = "category must be not null") String category,
+            @Valid PaginationRequestDto requestDto
+    )
+    {
+        return productService.getProductsByCategory(category , requestDto);
     }
 
 

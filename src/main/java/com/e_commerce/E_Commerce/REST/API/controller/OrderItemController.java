@@ -21,7 +21,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/orders/{orderId}/items")
+@RequestMapping("api/v1/orders/{orderId}/items")
 public class OrderItemController {
 
     private final OrderItemService orderItemService;
@@ -31,7 +31,10 @@ public class OrderItemController {
     @GetMapping
     public ResponseEntity< List<OrderItemResponseDTO>> getAll(
 
-            @PathVariable  @Positive @NotNull  Long ordreId,
+            @PathVariable
+            @NotNull (message = "id can be not null")
+            @Positive(message = "id must be positive value")
+            Long orderId,
             @RequestParam(value = "productId" , required = false) Long productId
 
     )
@@ -39,10 +42,10 @@ public class OrderItemController {
         List<OrderItemResponseDTO> orderItems;
         if (productId != null)
         {
-            orderItems = orderItemService.getItemsByOrderAndProduct(ordreId,productId);
+            orderItems = orderItemService.getItemsByOrderAndProduct(orderId,productId);
 
         } else  {
-            orderItems = orderItemService.getOrderItemsByOrder(ordreId);
+            orderItems = orderItemService.getOrderItemsByOrder(orderId);
         }
 
         if (orderItems.isEmpty())
@@ -58,8 +61,14 @@ public class OrderItemController {
 
     @GetMapping("/{itemId}")
     public  ResponseEntity<OrderItemResponseDTO> getOrderItem(
-            @PathVariable("orderId") @Positive @NotNull Long orderId,
-            @PathVariable("itemId") @Positive @NotNull Long itemId
+            @PathVariable("orderId")
+            @NotNull (message = "id can be not null")
+            @Positive(message = "id must be positive value")
+            Long orderId,
+            @PathVariable("itemId")
+            @NotNull (message = "id can be not null")
+            @Positive(message = "id must be positive value")
+            Long itemId
     )
     {
         OrderItemResponseDTO responseDTO = orderItemService.getOrderItemById(orderId,itemId);
@@ -78,8 +87,14 @@ public class OrderItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<OrderItemResponseDTO> updateQuantity(
-            @PathVariable("orderId") @Positive @NotNull Long orderId,
-            @PathVariable("itemId") @Positive @NotNull Long itemId,
+            @PathVariable("orderId")
+            @NotNull (message = "id can be not null")
+            @Positive(message = "id must be positive value")
+            Long orderId,
+            @PathVariable("itemId")
+            @NotNull (message = "id can be not null")
+            @Positive(message = "id must be positive value")
+            Long itemId,
             @Valid @RequestBody OrderItemUpdateRequestDTO requestDTO
             )
     {
@@ -92,8 +107,12 @@ public class OrderItemController {
 
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Void> deleteItem(
-            @PathVariable @Positive @NotNull Long orderId,
-            @PathVariable @Positive @NotNull Long itemId
+            @PathVariable
+            @NotNull (message = "id can be not null")
+            @Positive(message = "id must be positive value") Long orderId,
+            @PathVariable
+            @NotNull (message = "id can be not null")
+            @Positive(message = "id must be positive value") Long itemId
     )
     {
       // delete
