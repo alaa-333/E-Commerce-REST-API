@@ -1,5 +1,6 @@
 package com.e_commerce.E_Commerce.REST.API.dto.request;
 
+import com.e_commerce.E_Commerce.REST.API.exception.product.ProductQuantityExceedException;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,29 +39,6 @@ public class ProductCreateRequestDTO {
             message = "Image URL must be a valid URL ending with .png, .jpg, .jpeg, .gif, or .webp")
     private String imgUrl;
 
-    // Custom validation methods
-    public void sanitizeInput() {
-        if (this.name != null) {
-            this.name = this.name.trim();
-        }
-        if (this.description != null) {
-            this.description = this.description.trim();
-        }
-        if (this.category != null) {
-            this.category = this.category.trim();
-        }
-        if (this.imgUrl != null) {
-            this.imgUrl = this.imgUrl.trim();
-        }
-    }
 
-    public boolean isPriceReasonable() {
-        return price != null && price.compareTo(new BigDecimal("1000000")) < 0; // Max 1 million
-    }
 
-    public void validateBusinessRules() {
-        if (stockQuantity != null && stockQuantity > 100000) {
-            throw new IllegalArgumentException("Stock quantity cannot exceed 100,000 units");
-        }
-    }
 }

@@ -22,4 +22,5 @@ public class AddressRequestDTO {
 
     @NotBlank(message = "Country is required")
     private String country;
+
 }

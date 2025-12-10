@@ -34,43 +34,6 @@ public class ProductUpdateRequestDTO {
 
     private Boolean active;
 
-    // Helper methods for partial updates
-    public boolean hasName() {
-        return name != null && !name.isBlank();
-    }
 
-    public boolean hasDescription() {
-        return description != null && !description.isBlank();
-    }
 
-    public boolean hasPrice() {
-        return price != null;
-    }
-
-    public boolean hasStockQuantity() {
-        return stockQuantity != null;
-    }
-
-    public boolean hasCategory() {
-        return category != null && !category.isBlank();
-    }
-
-    public boolean hasImgUrl() {
-        return imgUrl != null && !imgUrl.isBlank();
-    }
-
-    public boolean hasActive() {
-        return active != null;
-    }
-
-    // Custom validation for conditional fields
-    @AssertTrue(message = "Price must be reasonable when provided")
-    public boolean isPriceReasonableWhenProvided() {
-        return price == null || price.compareTo(new BigDecimal("1000000")) < 0;
-    }
-
-    @AssertTrue(message = "Stock quantity must be reasonable when provided")
-    public boolean isStockQuantityReasonableWhenProvided() {
-        return stockQuantity == null || stockQuantity <= 100000;
-    }
 }

@@ -21,7 +21,7 @@ public class CustomerCreateRequestDTO {
 
     @NotBlank(message = "last name is required")
     @Pattern(regexp = "^[a-zA-Z ]{2,50}$", message = "First name must be 2-50 alphabetic characters")
-    private String LastName;
+    private String lastName;
 
     @NotBlank(message = "email is required")
     @Email(message = "invalid email format")
@@ -34,25 +34,8 @@ public class CustomerCreateRequestDTO {
     @NotNull(message = "address is required")
     private AddressRequestDTO address;
 
-    // custom helper validation methods
-    public void removeSpaces()
-    {
-        if (this.firstName != null)
-        {
-            this.firstName = this.firstName.trim();
-        }
-        if (this.LastName != null)
-        {
-            this.LastName = this.LastName.trim();
-        }
-    }
-    public void handlingEmail()
-    {
-        if (this.email != null)
-        {
-            this.email = email.trim().toLowerCase();
-        }
-    }
+
+
 
 
 }

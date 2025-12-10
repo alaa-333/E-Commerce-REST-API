@@ -1,5 +1,7 @@
 package com.e_commerce.E_Commerce.REST.API.dto.request;
 
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
+import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,10 +32,16 @@ public class PaymentRequestDTO {
 
     public void validatePaymentAmount()
     {
-        if (amount == null && amount.compareTo(new BigDecimal("50000")) > 0)
-        {
-            throw new IllegalArgumentException("payment amount can not exceed 50.000");
 
+        if (amount == null)
+        {
+            throw new ValidationException(ErrorCode.REQUIRED_FIELD_MISSING, "Amount cannot be null");
+        }
+
+
+        if (amount.compareTo(BigDecimal.valueOf(50000)) > 0)
+        {
+            throw new ValidationException(ErrorCode.UNREASONABLE_PRICE);
         }
 
 

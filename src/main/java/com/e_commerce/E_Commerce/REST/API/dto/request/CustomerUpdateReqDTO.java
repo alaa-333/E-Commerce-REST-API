@@ -26,28 +26,9 @@ public class CustomerUpdateReqDTO {
     @Pattern(regexp = "^\\+?[0-9\\-\\s()]{10,15}$", message = "Invalid phone number format")
     private String phone;
 
-
     private AddressRequestDTO address;
 
-    // Helper methods for partial updates
-    public boolean hasFirstName() {
-        return firstName != null && !firstName.isBlank();
-    }
 
-    public boolean hasLastName() {
-        return lastName != null && !lastName.isBlank();
-    }
 
-    public boolean hasEmail() {
-        return email != null && !email.isBlank();
-    }
-
-    public boolean hasPhone() {
-        return phone != null && !phone.isBlank();
-    }
-
-    public boolean hasAddress() {
-        return address != null;
-    }
 
 }

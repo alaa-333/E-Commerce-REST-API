@@ -1,8 +1,13 @@
 package com.e_commerce.E_Commerce.REST.API.dto.request;
 
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
+import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
+import com.e_commerce.E_Commerce.REST.API.exception.orderItem.OrderItemsEmptyException;
+import com.e_commerce.E_Commerce.REST.API.exception.order.OrderTotalInvalidException;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +15,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class OrderItemCreateRequestDTO {
 
 
@@ -35,10 +41,10 @@ public class OrderItemCreateRequestDTO {
 
     public void validate() {
         if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than 0");
+            throw new ValidationException(ErrorCode.ORDER_ITEMS_EMPTY);
         }
         if (unitPrice.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Unit price must be greater than 0");
+            throw new ValidationException(ErrorCode.INVALID_PRICE);
         }
     }
 }
