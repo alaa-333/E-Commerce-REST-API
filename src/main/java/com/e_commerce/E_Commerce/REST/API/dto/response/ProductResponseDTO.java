@@ -1,5 +1,8 @@
 package com.e_commerce.E_Commerce.REST.API.dto.response;
 
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
+import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
+
 import java.math.BigDecimal;
 
 public record ProductResponseDTO
@@ -22,10 +25,10 @@ public record ProductResponseDTO
     public ProductResponseDTO {
         // Validation
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Product name cannot be blank");
+            throw new ValidationException(ErrorCode.INVALID_PRODUCT_NAME);
         }
         if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Price cannot be negative");
+            throw new ValidationException(ErrorCode.INVALID_PRODUCT_PRICE);
         }
 
         // Default values
@@ -51,8 +54,8 @@ public record ProductResponseDTO
         if (stockQuantity == null || stockQuantity == 0) {
             return "OUT_OF_STOCK";
         }
-        if (stockQuantity < 10) {
-            return "LOW_STOCK";
+        if (stockQuantity < 10  && stockQuantity > 0) {
+            return "LOW_STOCK (" + stockQuantity + " left)";
         }
         return "IN_STOCK";
     }
@@ -62,15 +65,5 @@ public record ProductResponseDTO
         return active && stockQuantity > 0;
     }
 
-    public boolean isLowStock() {
-        return active && stockQuantity > 0 && stockQuantity < 10;
-    }
-
-    public String getStockLevel() {
-        if (!active) return "Not Available";
-        if (stockQuantity == 0) return "Out of Stock";
-        if (stockQuantity < 10) return "Low Stock (" + stockQuantity + " left)";
-        return "In Stock (" + stockQuantity + " available)";
-    }
 
     }

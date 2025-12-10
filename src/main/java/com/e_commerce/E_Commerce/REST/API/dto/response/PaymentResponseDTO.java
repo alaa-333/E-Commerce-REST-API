@@ -1,5 +1,8 @@
 package com.e_commerce.E_Commerce.REST.API.dto.response;
 
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
+import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -20,7 +23,7 @@ public record PaymentResponseDTO(
     public PaymentResponseDTO {
         // Validation
         if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount cannot be negative");
+            throw new ValidationException(ErrorCode.INVALID_PRICE);
         }
 
         // Default values
