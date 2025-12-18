@@ -78,7 +78,7 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 | 📦 **Product Catalog** | Inventory management with stock tracking |
 | 🛍️ **Order Processing** | End-to-end order lifecycle with status tracking |
 | 💳 **Payment Integration** | Stripe SDK with strategy pattern |
-| 📊 **Pagination & Sorting** | Dynamic pagination & navigation with multi-column sorting|
+| 📊 **Pagination & Sorting** | Dynamic pagination & navigation with sorting|
 
 </div>
 
@@ -137,25 +137,37 @@ E-Commerce-REST-API/
 │
 ├── src/main/java/com/e_commerce/E_Commerce/REST/API/
 │   │
+│   ├── 📂 config/                  # Configuration Layer
+│   │   └── SecurityConfig.java          # Security & Filter chain config
+│   │
 │   ├── 📂 controller/              # REST API Endpoints Layer
+│   │   ├── AuthController.java          # Authentication endpoints (Login/Signup)
 │   │   ├── CustomerController.java      # Customer CRUD operations
 │   │   ├── OrderController.java         # Order management & status updates
 │   │   ├── OrderItemController.java     # Order item operations
+│   │   ├── PaymentController.java       # Payment operations
 │   │   └── ProductController.java       # Product CRUD, search & filtering
 │   │
+│   ├── 📂 filter/                  # Security Filters
+│   │   └── JwtAuthFilter.java           # JWT Authentication Filter
+│   │
 │   ├── 📂 service/                 # Business Logic Layer
+│   │   ├── CustomUserDetailsService.java # User details service for Auth
 │   │   ├── CustomerService.java         # Customer business rules
 │   │   ├── OrderService.java            # Order processing logic
 │   │   ├── OrderItemService.java        # Order item management
+│   │   ├── OrderItemValidator.java      # Order item validation logic
 │   │   ├── PaymentService.java          # Payment processing
-│   │   └── ProductService.java          # Product management & validation
+│   │   ├── ProductService.java          # Product management & validation
+│   │   └── UserService.java             # User management service
 │   │
 │   ├── 📂 repository/              # Data Access Layer
 │   │   ├── CustomerRepository.java      # Customer data operations
 │   │   ├── OrderRepository.java         # Order queries
 │   │   ├── OrderItemRepository.java     # Order item queries
 │   │   ├── PaymentRepository.java       # Payment data access
-│   │   └── ProductRepository.java       # Product queries & search
+│   │   ├── ProductRepository.java       # Product queries & search
+│   │   └── UserRepository.java          # User data access
 │   │
 │   ├── 📂 model/                   # Domain Entities (JPA)
 │   │   ├── Customer.java                # Customer entity with address
@@ -163,30 +175,38 @@ E-Commerce-REST-API/
 │   │   ├── OrderItem.java               # Order line items
 │   │   ├── Payment.java                 # Payment entity
 │   │   ├── Product.java                 # Product catalog entity
+│   │   ├── User.java                    # User entity for application users
 │   │   ├── Address.java                 # Embedded address value object
 │   │   └── enums/
 │   │       ├── OrderStatus.java          # Order status enumeration
-│   │       └── PaymentStatus.java        # Payment status enumeration
+│   │       ├── PaymentStatus.java        # Payment status enumeration
+│   │       ├── Role.java                 # User roles (ADMIN, USER)
+│   │       └── WhiteList.java            # Allowed sort fields
 │   │
 │   ├── 📂 dto/                      # Data Transfer Objects
 │   │   ├── request/                     # Input DTOs (API contracts)
 │   │   │   ├── AddressRequestDTO.java
 │   │   │   ├── CustomerCreateRequestDTO.java
 │   │   │   ├── CustomerUpdateReqDTO.java
+│   │   │   ├── LoginRequestDto.java
 │   │   │   ├── OrderCreateRequestDTO.java
 │   │   │   ├── OrderItemCreateRequestDTO.java
 │   │   │   ├── OrderItemUpdateRequestDTO.java
 │   │   │   ├── OrderUpdateRequestDTO.java
+│   │   │   ├── PaginationRequestDto.java
 │   │   │   ├── PaymentRequestDTO.java
 │   │   │   ├── PaymentUpdateRequestDTO.java
 │   │   │   ├── ProductCreateRequestDTO.java
-│   │   │   └── ProductUpdateRequestDTO.java
+│   │   │   ├── ProductUpdateRequestDTO.java
+│   │   │   ├── SignupRequestDto.java
+│   │   │   └── UserCreateRequestDto.java
 │   │   │
 │   │   └── response/                    # Output DTOs (API responses)
 │   │       ├── AddressResponseDTO.java
 │   │       ├── CustomerResponseDTO.java
 │   │       ├── OrderItemResponseDTO.java
 │   │       ├── OrderResponseDTO.java
+│   │       ├── PaginationResponseDto.java
 │   │       ├── PaymentResponseDTO.java
 │   │       └── ProductResponseDTO.java
 │   │
@@ -195,7 +215,8 @@ E-Commerce-REST-API/
 │   │   ├── OrderMapper.java             # Order entity ↔ DTO mapping
 │   │   ├── OrderItemMapper.java         # OrderItem entity ↔ DTO mapping
 │   │   ├── PaymentMapper.java           # Payment entity ↔ DTO mapping
-│   │   └── ProductMapper.java           # Product entity ↔ DTO mapping
+│   │   ├── ProductMapper.java           # Product entity ↔ DTO mapping
+│   │   └── UserMapper.java              # User entity ↔ DTO mapping
 │   │
 │   ├── 📂 exception/                # Exception Handling
 │   │   ├── GlobalExceptionHandling.java     # Centralized exception handler
@@ -207,31 +228,20 @@ E-Commerce-REST-API/
 │   │   ├── ErrorResponse.java               # Standardized error response
 │   │   │
 │   │   ├── customer/                        # Customer-specific exceptions
-│   │   │   ├── CustomerNotFoundException.java
-│   │   │   └── CustomerInactiveException.java
-│   │   │
 │   │   ├── order/                           # Order-specific exceptions
-│   │   │   ├── OrderNotFoundException.java
-│   │   │   ├── OrderAlreadyProcessedException.java
-│   │   │   └── OrderTotalInvalidException.java
-│   │   │
 │   │   ├── orderItem/                       # OrderItem exceptions
-│   │   │   └── OrderItemsEmptyException.java
-│   │   │
 │   │   ├── payment/                         # Payment exceptions
-│   │   │   └── PaymentAmountMismatchException.java
-│   │   │
 │   │   └── product/                         # Product-specific exceptions
-│   │       ├── ProductNotFoundException.java
-│   │       ├── ProductOutOfStockException.java
-│   │       ├── InsufficientStockException.java
-│   │       └── ProductQuantityExceedException.java
 │   │
 │   ├── 📂 payment/                   # Payment Strategy Pattern
 │   │   ├── PaymentStrategy.java            # Payment strategy interface
 │   │   ├── CreditCardPaymentStrategy.java  # Credit card payment interface
 │   │   ├── CashWalletPaymentStrategy.java   # Wallet payment implementation
 │   │   └── StripePayment.java              # Stripe gateway integration
+│   │
+│   ├── 📂 util/                      # Utilities
+│   │   ├── JwtResponse.java             # JWT response container
+│   │   └── JwtTokenUtil.java            # JWT generation & validation utils
 │   │
 │   └── ECommerceRestApiApplication.java    # Spring Boot main class
 │
@@ -266,6 +276,9 @@ E-Commerce-REST-API/
 - Database Layer — Oracle integration with JPA
 - DTO Pattern — MapStruct implementation
 - Input Validation — Jakarta Validation
+- Exception Handling — Global error management
+- Business Exceptions — Custom error types
+- Error Codes — Standardized error responses
 
 <br/>
 
@@ -273,9 +286,7 @@ E-Commerce-REST-API/
 
 - Payment Service — Stripe integration underway
 - Payment Strategies — Credit card & wallet support
-- Exception Handling — Global error management
-- Business Exceptions — Custom error types
-- Error Codes — Standardized error responses
+
 
 <br/>
 
