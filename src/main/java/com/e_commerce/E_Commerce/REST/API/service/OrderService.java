@@ -28,10 +28,14 @@ import com.e_commerce.E_Commerce.REST.API.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -72,15 +76,31 @@ public class OrderService {
          List<OrderItem> orderItemList = order.getOrderItems();
 
 
+         Set<Long> productsId = orderItemList
+                 .stream()
+                 .map(p -> p.getProduct().getId())
+                 .collect(Collectors.toSet());
+
+
+
+        Map<Long, Product> productMap = productRepository.findAllById(productsId)
+                .stream()
+                .collect(Collectors.toMap(
+                        Product::getId,
+                        p -> p
+                ));
 
         // fetch products and set in orders items
         for (int i = 0 ; i < orderItemList.size() ; i++)
         {
             OrderItemCreateRequestDTO itemDto = requestDTO.getOrderItems().get(i);
             OrderItem orderItem = orderItemList.get(i);
-            Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new ProductNotFoundException(itemDto.getProductId()));
 
+            Product product = productMap.get(itemDto.getProductId());
+            if (product == null)
+            {
+                throw new ValidationException(ErrorCode.PRODUCT_INSUFFICIENT_STOCK);
+            }
             orderItem.setProduct(product);
         }
         order.setOrderItems(orderItemList);
@@ -109,10 +129,12 @@ public class OrderService {
 
     }
 
-    public List<OrderResponseDTO> getAll ()
+    public PaginationResponseDto<OrderResponseDTO> getAll (PaginationRequestDto requestDto)
     {
-        return orderRepository.findAllWithCustomer()
-                .stream().map(orderMapper::toResponseDTO).toList();
+        Page<Order> orderPage =  orderRepository.findAllWithCustomer(requestDto.toPageable());
+        return PaginationResponseDto.PaginationMetadata.of(
+                orderPage.map(orderMapper::toResponseDTO)
+        );
     }
 
     public List<OrderResponseDTO> getOrdersByCustomerId(Long customerId)
