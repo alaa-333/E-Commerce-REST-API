@@ -1,6 +1,6 @@
 package com.e_commerce.E_Commerce.REST.API.dto.request;
 
-import jakarta.validation.constraints.Email;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CustomerCreateRequestDTO {
+public class CustomerCreateRequestDto {
 
     @NotBlank(message = "First name is required")
     @Pattern(regexp = "^[a-zA-Z ]{2,50}$", message = "First name must be 2-50 alphabetic characters")
@@ -23,16 +23,17 @@ public class CustomerCreateRequestDTO {
     @Pattern(regexp = "^[a-zA-Z ]{2,50}$", message = "First name must be 2-50 alphabetic characters")
     private String lastName;
 
-    @NotBlank(message = "email is required")
-    @Email(message = "invalid email format")
-    private String email;
+
 
     @NotBlank(message = "phone number is required")
     @Pattern(regexp = "^\\+?[0-9\\-\\s()]{10,15}$", message = "Invalid phone number format")
     private String phone;
 
     @NotNull(message = "address is required")
+    @Valid
     private AddressRequestDTO address;
+
+
 
 
 

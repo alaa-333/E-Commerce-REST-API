@@ -79,44 +79,52 @@ public class OrderItemService {
         return orderItemMapper.toResponseDTO(saved);
     }
 
+
+
+
+    @Transactional
     public OrderItemResponseDTO updateOrderItemQuantity(Long orderId, Long orderItemId,
                                                         OrderItemUpdateRequestDTO updateRequestDTO) {
-        // Validate update request
-        orderItemValidator.validateOrderItemUpdateRequest(updateRequestDTO);
-
-        // Get and validate order
+        // 1. Fetch data
         Order order = getAndValidateOrder(orderId);
-        orderItemValidator.validateOrderStatusForItemOperations(order);
-
-        // Get and validate order item
         OrderItem orderItem = orderItemRepository.findById(orderItemId)
                 .orElseThrow(() -> new ValidationException(ErrorCode.ORDER_ITEM_NOT_FOUND));
 
+        // 2. Security/Business Validations
+        orderItemValidator.validateOrderStatusForItemOperations(order);
         orderItemValidator.validateOrderItemBelongsToOrder(orderItem, orderId);
 
-        Integer newQuantity = updateRequestDTO.getOrderQuantity();
+        // 3. Calculate Quantity Change
+        int oldQuantity = orderItem.getQuantity();
+        int newQuantity = updateRequestDTO.getOrderQuantity();
+        int diff = newQuantity - oldQuantity; // Positive if buying more, negative if returning
 
-        // Validate stock for quantity update
-        orderItemValidator.validateStockForQuantityUpdate(orderItem, newQuantity);
+        if (diff == 0) return orderItemMapper.toResponseDTO(orderItem);
 
-        // Calculate price differences
-        BigDecimal oldTotal = orderItemMapper.calculateItemTotal(orderItem);
+        // 4. ATOMIC STOCK UPDATE (The Fix)
+        int updatedRows = productRepository.reduceStock(orderItem.getProduct().getId(), diff);
+
+        if (updatedRows == 0) {
+            throw new ValidationException(ErrorCode.PRODUCT_INSUFFICIENT_STOCK);
+        }
+
+        // 5. Update OrderItem and Order Totals
+        BigDecimal oldItemTotal = orderItem.getUnitPrice().multiply(BigDecimal.valueOf(oldQuantity));
+        BigDecimal newItemTotal = orderItem.getUnitPrice().multiply(BigDecimal.valueOf(newQuantity));
+        BigDecimal priceDifference = newItemTotal.subtract(oldItemTotal);
+
         orderItem.setQuantity(newQuantity);
-        BigDecimal newTotal = orderItemMapper.calculateItemTotal(orderItem);
-        BigDecimal difference = newTotal.subtract(oldTotal);
+        order.setTotalAmount(order.getTotalAmount().add(priceDifference));
 
-        // Update product stock
-        int quantityDifference = newQuantity - orderItem.getQuantity();
-        updateProductStock(orderItem.getProduct(), -quantityDifference);
-
-        // Update order
-        order.setTotalAmount(order.getTotalAmount().add(difference));
-
-        OrderItem savedItem = orderItemRepository.save(orderItem);
+        // 6. Save (JPA will sync these in one transaction)
+        orderItemRepository.save(orderItem);
         orderRepository.save(order);
 
-        return orderItemMapper.toResponseDTO(savedItem);
+        return orderItemMapper.toResponseDTO(orderItem);
     }
+
+
+
 
     @Transactional(readOnly = true)
     public List<OrderItemResponseDTO> getOrderItemsByOrder(Long orderId) {
