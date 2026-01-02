@@ -1,20 +1,34 @@
 
-
 ## 🗄️ Database Schema
 
 ### Entity Relationships
 
 ```mermaid
 erDiagram
+    USER ||--|| CUSTOMER : "associated with"
+    USER {
+        Long id PK
+        String email UK
+        String password
+        Set~Role~ roles
+        Boolean enabled
+        Boolean accountNonLocked
+        LocalDateTime createdAt
+        LocalDateTime updatedAt
+    }
+
     CUSTOMER ||--o{ ORDER : places
     CUSTOMER {
         Long id PK
+        Long userId FK
         String firstName
         String lastName
-        String email UK
-        String phoneNumber
+        String phone
+        String city
+        String street
+        String postalCode
+        String country
         LocalDateTime createdAt
-        Address address
     }
     
     ORDER ||--|{ ORDER_ITEM : contains
@@ -34,25 +48,30 @@ erDiagram
         Long orderId FK
         Long productId FK
         Integer quantity
-        BigDecimal price
-        BigDecimal itemTotal
+        BigDecimal unitPrice
     }
     
     PRODUCT {
         Long id PK
-        String name UK
+        String name
         String description
         BigDecimal price
         Integer stockQuantity
+        String category
+        String imgUrl
+        Boolean active
+        LocalDateTime createdAt
     }
     
     PAYMENT {
         Long id PK
         Long orderId FK
         BigDecimal amount
-        String paymentMethod
-        PaymentStatus status
+        PaymentMethod paymentMethod
+        PaymentStatus paymentStatus
         LocalDateTime paymentDate
+        String transactionId
+        String paymentGatewayResponse
     }
 ```
 
@@ -70,6 +89,8 @@ sequenceDiagram
     participant ProductService
     participant OrderRepository
     participant PaymentService
+    participant PaymentStrategyFactory
+    participant PaymentStrategy
     
     Client->>OrderController: POST /api/orders
     OrderController->>OrderController: Validate DTO
@@ -78,8 +99,6 @@ sequenceDiagram
     OrderService->>OrderService: validateOrder(dto)
     OrderService->>CustomerService: getCustomerById()
     CustomerService-->>OrderService: Customer
-    
-    OrderService->>OrderService: Check customer active
     
     loop For each OrderItem
         OrderService->>ProductService: getById(productId)
@@ -93,8 +112,11 @@ sequenceDiagram
     OrderService->>OrderRepository: save(order)
     OrderRepository-->>OrderService: Saved Order
     
-    OrderService->>PaymentService: processPayment()
-    PaymentService-->>OrderService: Payment Result
+    OrderService->>PaymentService: processPayment(order)
+    PaymentService->>PaymentStrategyFactory: getStrategy(paymentMethod)
+    PaymentStrategyFactory-->>PaymentService: PaymentStrategy (e.g., Stripe)
+    PaymentService->>PaymentStrategy: processPayment(amount)
+    PaymentStrategy-->>PaymentService: PaymentResult
     
     OrderService->>OrderService: Map to DTO
     OrderService-->>OrderController: OrderResponseDTO
@@ -121,4 +143,3 @@ sequenceDiagram
     GlobalExceptionHandling->>GlobalExceptionHandling: Set HTTP Status
     GlobalExceptionHandling-->>Client: Error Response (404)
 ```
-

@@ -521,7 +521,7 @@ This project was developed with assistance from cutting-edge AI coding assistant
 
 <br/>
 
-> These AI assistants helped accelerate development by providing code suggestions, explaining complex concepts, generating documentation, and assisting with design pattern implementations like the Strategy Pattern for payments.
+> These AI assistants helped accelerate development by providing code suggestions, explaining complex concepts, generating documentation.
 
 
 ---
