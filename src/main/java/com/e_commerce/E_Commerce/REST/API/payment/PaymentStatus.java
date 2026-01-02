@@ -1,4 +1,4 @@
-package com.e_commerce.E_Commerce.REST.API.model.enums;
+package com.e_commerce.E_Commerce.REST.API.payment;
 
 public enum PaymentStatus {
     PENDING, SUCCESSFUL, FAILED, REFUNDED
