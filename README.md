@@ -117,7 +117,8 @@ This REST API serves as a comprehensive backend solution for e-commerce applicat
 | Library | Purpose |
 |:--------|:--------|
 | **Lombok** | Reduces boilerplate code with annotations |
-| **Stripe Java SDK** | Payment processing integration (v24.0.0) |
+| **Stripe Java SDK** | Payment processing integration (v30.0.0) |
+| **JJWT** | JWT authentication token handling (v0.13.0) |
 
 <br/>
 
@@ -138,7 +139,8 @@ E-Commerce-REST-API/
 ├── src/main/java/com/e_commerce/E_Commerce/REST/API/
 │   │
 │   ├── 📂 config/                  # Configuration Layer
-│   │   └── SecurityConfig.java          # Security & Filter chain config
+│   │   ├── SecurityConfig.java          # Security & Filter chain config
+│   │   └── StripeConfig.java            # Stripe API key configuration
 │   │
 │   ├── 📂 controller/              # REST API Endpoints Layer
 │   │   ├── AuthController.java          # Authentication endpoints (Login/Signup)
@@ -179,7 +181,7 @@ E-Commerce-REST-API/
 │   │   ├── Address.java                 # Embedded address value object
 │   │   └── enums/
 │   │       ├── OrderStatus.java          # Order status enumeration
-│   │       ├── PaymentStatus.java        # Payment status enumeration
+│   │       |
 │   │       ├── Role.java                 # User roles (ADMIN, USER)
 │   │       └── WhiteList.java            # Allowed sort fields
 │   │
@@ -234,10 +236,11 @@ E-Commerce-REST-API/
 │   │   └── product/                         # Product-specific exceptions
 │   │
 │   ├── 📂 payment/                   # Payment Strategy Pattern
-│   │   ├── PaymentStrategy.java            # Payment strategy interface
-│   │   ├── CreditCardPaymentStrategy.java  # Credit card payment interface
-│   │   ├── CashWalletPaymentStrategy.java   # Wallet payment implementation
-│   │   └── StripePayment.java              # Stripe gateway integration
+│   │   ├── PaymentStrategy.java            # Payment strategy interface with PaymentResult
+│   │   ├── PaymentStrategyFactory.java     # Factory for selecting payment strategies
+│   │   ├── StripePaymentStrategy.java      # Stripe PaymentIntent integration
+│   │   ├── PaymentMethod.java              # Payment method enum (STRIPE, etc.)
+│   │   └── PaymentStatus.java              # Payment status enum
 │   │
 │   ├── 📂 util/                      # Utilities
 │   │   ├── JwtResponse.java             # JWT response container
@@ -279,14 +282,16 @@ E-Commerce-REST-API/
 - Exception Handling — Global error management
 - Business Exceptions — Custom error types
 - Error Codes — Standardized error responses
+- **Payment Service** — Stripe PaymentIntent integration ✓
+- **Payment Strategy Pattern** — Extensible payment architecture ✓
+- **JWT Authentication** — Secure token-based auth ✓
 
 <br/>
 
 **⧗ In Development**
 
-- Payment Service — Stripe integration underway
-- Payment Strategies — Credit card & wallet support
-
+- Stripe Webhook — Payment confirmation via webhooks
+- Additional Payment Methods — PayPal, Apple Pay strategies
 
 <br/>
 
@@ -357,6 +362,8 @@ API available at: `http://localhost:8080/api`
 
 <br/>
 
+
+
 ---
 
 ## ▎API Documentation
@@ -407,8 +414,8 @@ http://localhost:8080/api
 
 | Method | Endpoint | Description | Status |
 |:------:|:---------|:------------|:------:|
-| `POST` | `/api/payments` | Process payment transaction | ⧗ |
-| `GET` | `/api/payments/{id}` | Retrieve payment by ID | ⧗ |
+| `POST` | `/api/v1/payments` | Create payment (returns Stripe clientSecret) | ✓ |
+| `GET` | `/api/v1/payments/{id}` | Retrieve payment by ID | ✓ |
 
 <br/>
 
@@ -459,9 +466,63 @@ Content-Type: application/json
 }
 ```
 
+<br/>
+
+**Create Payment Request (Stripe)**
+```http
+POST /api/v1/payments HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer <JWT_TOKEN>
+
+{
+  "amount": 99.99,
+  "paymentMethod": "STRIPE",
+  "orderId": 1
+}
+```
+
+<br/>
+
+**Payment Response**
+```json
+{
+  "id": 1,
+  "paymentMethod": "STRIPE",
+  "amount": 99.99,
+  "paymentStatus": "PENDING",
+  "transactionId": "pi_3ABC123...",
+  "paymentGatewayResponse": "pi_3ABC123_secret_XYZ..."
+}
+```
+> **Note**: The `paymentGatewayResponse` contains the Stripe `clientSecret` for frontend payment confirmation.
+
 </details>
 
 <br/>
+
+<br/>
+
+---
+
+## ▎LLMs I Worked With
+
+This project was developed with assistance from cutting-edge AI coding assistants:
+
+<br/>
+
+<div align="center">
+
+| AI Assistant | Provider | Role |
+|:-------------|:---------|:-----|
+| 🤖 **Claude** | Anthropic | Code review, architecture guidance, documentation |
+| 🚀 **Antigravity** | Google DeepMind | Pair programming, implementation, debugging |
+
+</div>
+
+<br/>
+
+> These AI assistants helped accelerate development by providing code suggestions, explaining complex concepts, generating documentation, and assisting with design pattern implementations like the Strategy Pattern for payments.
+
 
 ---
 
@@ -472,9 +533,9 @@ Content-Type: application/json
 **Development Progress**
 
 ```
-Phase 1: Core Features       ███████████████░░░░░  75%
-Phase 2: Security & Quality  ████░░░░░░░░░░░░░░░░  20%
-Phase 3: Performance         ░░░░░░░░░░░░░░░░░░░░   0%
+Phase 1: Core Features       ████████████████████  100%
+Phase 2: Security & Quality  ████████░░░░░░░░░░░░  40%
+Phase 3: Performance         ████░░░░░░░░░░░░░░░░  20%
 Phase 4: Advanced Features   ░░░░░░░░░░░░░░░░░░░░   0%
 ```
 
@@ -485,33 +546,33 @@ Phase 4: Advanced Features   ░░░░░░░░░░░░░░░░░
 
 <br/>
 
-### Phase 1: Core Features (Q1 2024)
+### Phase 1: Core Features ✓ Complete
 
 - [x] Customer Management System
 - [x] Product Catalog Management
 - [x] Order Processing Engine
 - [x] Order Items Support
 - [x] Database Schema Design
-- [ ] Payment Processing Integration
-- [ ] Global Exception Handling
+- [x] Payment Processing Integration (Stripe)
+- [x] Global Exception Handling
 
 <br/>
 
-### Phase 2: Security & Quality (Q2 2024)
+### Phase 2: Security & Quality (In Progress)
 
-- [ ] JWT Authentication & Authorization
-- [ ] Role-Based Access Control (RBAC)
+- [x] JWT Authentication & Authorization
+- [x] Role-Based Access Control (RBAC)
 - [ ] API Documentation (Swagger/OpenAPI)
 - [ ] Unit Testing (JUnit 5, Mockito)
 - [ ] Integration Testing
-- [ ] Logging Framework (SLF4J/Logback)
+- [x] Logging Framework (SLF4J/Logback)
 - [ ] Security Headers
 
 <br/>
 
-### Phase 3: Performance & Scalability (Q3 2024)
+### Phase 3: Performance & Scalability (In Progress)
 
-- [ ] Pagination & Filtering
+- [x] Pagination & Filtering
 - [ ] Caching Layer (Redis)
 - [ ] Rate Limiting
 - [ ] Database Query Optimization
@@ -557,6 +618,7 @@ We welcome contributions from the community. Please follow these guidelines:
 - Use DTOs for all request/response payloads
 - Follow RESTful API design principles
 
+
 <br/>
 
 ---
@@ -594,6 +656,6 @@ Developed by Alaa Mohamed
 
 <br/>
 
-<sub>Last Updated: 2024 · Documentation v1.0</sub>
+<sub>Last Updated: January 2026 · Documentation v1.1</sub>
 
 </div>

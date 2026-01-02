@@ -1,6 +1,6 @@
 package com.e_commerce.E_Commerce.REST.API.controller;
 
-import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerCreateRequestDTO;
+import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerCreateRequestDto;
 import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerUpdateReqDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.request.PaginationRequestDto;
 import com.e_commerce.E_Commerce.REST.API.dto.response.CustomerResponseDTO;
@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Validated
 @RequiredArgsConstructor
 @RestController
@@ -27,7 +25,7 @@ public class CustomerController {
 
 
     @PostMapping
-    public ResponseEntity<CustomerResponseDTO> createCustomer(@Valid @RequestBody CustomerCreateRequestDTO requestDTO)
+    public ResponseEntity<CustomerResponseDTO> createCustomer(@Valid @RequestBody CustomerCreateRequestDto requestDTO)
     {
         CustomerResponseDTO response = customerService.createCustomer(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -44,12 +42,12 @@ public class CustomerController {
         return ResponseEntity.ok( customerService.getCustomerById(id));
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<CustomerResponseDTO> getCustomerByEmail(@PathVariable @NotNull(message = "email can be not null") String email)
-    {
-        CustomerResponseDTO responseDTO = customerService.getCustomerByEmail(email);
-        return ResponseEntity.ok(responseDTO);
-    }
+//    @GetMapping("/email/{email}")
+//    public ResponseEntity<CustomerResponseDTO> getCustomerByEmail(@PathVariable @NotNull(message = "email can be not null") String email)
+//    {
+//        CustomerResponseDTO responseDTO = customerService.getCustomerByEmail(email);
+//        return ResponseEntity.ok(responseDTO);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> updateCustomer (

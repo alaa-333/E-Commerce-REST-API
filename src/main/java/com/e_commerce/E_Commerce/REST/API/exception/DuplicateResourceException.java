@@ -1,7 +1,5 @@
 package com.e_commerce.E_Commerce.REST.API.exception;
 
-import org.springframework.http.HttpStatus;
-
 public class DuplicateResourceException extends BusinessException{
 
     public DuplicateResourceException(ErrorCode errorCode, String resource , Object identifier)
@@ -11,7 +9,7 @@ public class DuplicateResourceException extends BusinessException{
 
     public DuplicateResourceException(String resource , Object identifier)
     {
-        this(ErrorCode.RESOURCE_NOT_FOUND, resource, identifier);
+        this(ErrorCode.DUPLICATE_ENTRY, resource, identifier);
     }
 
 
@@ -27,7 +25,7 @@ public class DuplicateResourceException extends BusinessException{
     public static DuplicateResourceException forCustomer(String customerEmail)
     {
         return new DuplicateResourceException(
-                ErrorCode.CUSTOMER_ALREADY_EXISTS,
+                ErrorCode.USER_ALREADY_EXISTS,
                 "customer",
                 customerEmail
         );

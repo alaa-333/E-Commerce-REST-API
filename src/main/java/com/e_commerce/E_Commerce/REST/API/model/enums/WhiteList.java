@@ -13,18 +13,16 @@ public enum WhiteList {
     // ======= PRODUCT FIELDS ========
     PRODUCT_ID("id", "product_id"),
 
-    PRODUCT_NAME("Name", "product_name"),
-    PRODUCT_PRICE("Price", "product_price"),
+    PRODUCT_NAME("name", "product_name"),
+    PRODUCT_PRICE("price", "product_price"),
     PRODUCT_CATEGORY("category",   "category"),
 
     // ======= ORDER FIELDS =========
-    ORDER_STATUS("orderStatus" , "order_status"),
-//    ORDER_ID("orderid", "order_id"),
+    ORDER_STATUS("orderstatus" , "order_status"),
 
-    // ====== CUSTOMER FIELDS ======
-//    CUSTOMER_ID("id", "customer_id"),
-    FIRST_NAME("firstName" , "first_name"),
-    LAST_NAME("lastName" , "last_name");
+
+    FIRST_NAME("firstname" , "first_name"),
+    LAST_NAME("lastname" , "last_name");
 
 
     private final String apiField;

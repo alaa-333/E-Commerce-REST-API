@@ -14,7 +14,6 @@ import com.e_commerce.E_Commerce.REST.API.exception.product.ProductQuantityExcee
 import com.e_commerce.E_Commerce.REST.API.mapper.ProductMapper;
 import com.e_commerce.E_Commerce.REST.API.model.Product;
 import com.e_commerce.E_Commerce.REST.API.repository.ProductRepository;
-import jakarta.validation.constraints.AssertTrue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -113,7 +112,7 @@ public class ProductService {
 
         PaginationRequestDto.validate(requestDto);
 
-        Page<Product> products =  productRepository.findByNameContaining(productName , requestDto.toPageable());
+        Page<Product> products =  productRepository.searchByNameContainingIgnoreCase(productName , requestDto.toPageable());
 
       return  PaginationResponseDto.PaginationMetadata.of(
               products.map(productMapper::toResponseDTO)

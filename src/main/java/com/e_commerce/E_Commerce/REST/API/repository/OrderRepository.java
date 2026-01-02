@@ -24,7 +24,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByIdWithCustomer(@Param("id") Long id);
 
     @Query("SELECT o FROM Order o JOIN FETCH o.customer")
-    List<Order> findAllWithCustomer();
+    Page<Order> findAllWithCustomer(Pageable pageable);
 
     @Query("SELECT o FROM Order o JOIN FETCH o.customer JOIN FETCH o.orderItems WHERE o.id = :id")
     Optional<Order> findByIdWithCustomerAndItems(@Param("id") Long id);

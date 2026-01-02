@@ -1,81 +1,113 @@
 package com.e_commerce.E_Commerce.REST.API.controller;
 
 import com.e_commerce.E_Commerce.REST.API.dto.request.LoginRequestDto;
+import com.e_commerce.E_Commerce.REST.API.dto.request.RefreshTokenRequest;
 import com.e_commerce.E_Commerce.REST.API.dto.request.SignupRequestDto;
-import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
-import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
-import com.e_commerce.E_Commerce.REST.API.model.User;
-import com.e_commerce.E_Commerce.REST.API.service.CustomUserDetailsService;
-import com.e_commerce.E_Commerce.REST.API.service.UserService;
-import com.e_commerce.E_Commerce.REST.API.util.JwtTokenUtil;
+import com.e_commerce.E_Commerce.REST.API.service.AuthService;
+import com.e_commerce.E_Commerce.REST.API.util.JwtService;
 import com.e_commerce.E_Commerce.REST.API.util.JwtResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final CustomUserDetailsService userDetailsService;
-    private final UserService userService;
+    private final AuthService authService;
+
+    private final  JwtService jwtService;
 
     // =========== LOGIN =============
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login (@Valid @RequestBody LoginRequestDto requestDto)
-    {
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword() )
-                );
+    public ResponseEntity<?> login( @RequestBody @Valid LoginRequestDto requestDto) {
 
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtTokenUtil.generateToken(userDetails);
-
-        JwtResponse response =  JwtResponse.builder()
-                .accessToken(token)
-                .expiration(jwtTokenUtil.getJwtExpiration())
-                .roles(userDetails.getAuthorities())
-                .build();
-        return ResponseEntity.ok(response);
+        JwtResponse response = authService.login(requestDto);
+        // Set cookies
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, buildAccessTokenCookie(response.getAccessToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, buildRefreshTokenCookie(response.getRefreshToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, buildCsrfCookie().toString()) // CSRF token
+                .body(Map.of("message", "Login successful"));
     }
 
+    // =========== REFRESH =============
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest request)
+    {
+
+        return ResponseEntity.ok(authService.refreshToken(request));
+
+    }
+
+    // =========== REGISTER =============
     @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(@Valid SignupRequestDto requestDto)
+    public ResponseEntity<JwtResponse> register( @RequestBody @Valid SignupRequestDto requestDto)
     {
-        if (userService.existByEmail(requestDto.getUserCreateRequestDto().getEmail()))
-        {
-            throw new ValidationException(ErrorCode.DUPLICATE_ENTRY);
-        }
-
-        User user = userService.createUser(requestDto);
-        String token = jwtTokenUtil.generateToken(user);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                 JwtResponse.builder()
-                         .accessToken(token)
-                         .expiration(jwtTokenUtil.getJwtExpiration())
-                         .username(requestDto.getCustomerCreateRequestDto().getFirstName())
-                         .roles(user.getRoles())
-                         .build()
-        );
-
+        return ResponseEntity.ok(authService.register(requestDto));
     }
 
+
+
+
+    // 🛠️ Helpers
+    private String getCookieValue(HttpServletRequest req, String name) {
+        return Optional.ofNullable(req.getCookies())
+                .stream()
+                .flatMap(Arrays::stream)
+                .filter(c -> name.equals(c.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
+    }
+
+    private ResponseCookie buildAccessTokenCookie(String token) {
+        return ResponseCookie.from("access_token", token)
+                .httpOnly(true)
+                .secure(true) // HTTPS only
+                .sameSite("lax")
+                .path("/auth/login")
+                .maxAge(jwtService.getJwtExpiration() / 1000)
+                .build();
+    }
+
+    private ResponseCookie buildRefreshTokenCookie(String token) {
+        return ResponseCookie.from("refresh_token", token)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/refresh") // restrict to /refresh endpoint
+                .maxAge(jwtService.getRefreshExpiration() / 1000)
+                .build();
+    }
+
+    private ResponseCookie buildCsrfCookie() {
+        String csrfToken = UUID.randomUUID().toString();
+        return ResponseCookie.from("XSRF-TOKEN", csrfToken) // readable by JS
+                .httpOnly(false) // ✅ required so JS can read & send in header
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(jwtService.getJwtExpiration() / 1000)
+                .build();
+    }
 
 
 

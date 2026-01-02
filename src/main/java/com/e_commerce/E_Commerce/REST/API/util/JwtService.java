@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Component
-public class JwtTokenUtil {
+public class JwtService {
 
     @Value("${jwt.secret}")
     private String secret;
@@ -61,6 +61,17 @@ public class JwtTokenUtil {
                 .compact();
     }
 
+
+    public String refreshToken(String username)
+    {
+       return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + refreshExpiration) )
+                .signWith(getSigningKey())
+                .compact();
+
+    }
     // ========= token validation =========
 
     public boolean validateToken(String token) // Checks the signature using the Secret Key issued by your server

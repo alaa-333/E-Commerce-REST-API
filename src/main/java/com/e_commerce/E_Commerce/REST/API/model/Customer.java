@@ -1,5 +1,6 @@
 package com.e_commerce.E_Commerce.REST.API.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,21 +13,24 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
+// Explicitly exclude the customer field
+@ToString(exclude = "user")
+@EqualsAndHashCode(exclude = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "customers")
+@Table(name = "customers", indexes = {
+        @Index(name = "idx_customer_created_at", columnList = "created_at")
+})
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE) // TO ENABLE BATCHING
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(name = "first_name" , nullable = false)
     private String firstName;
     @Column(name = "last_name" , nullable = false)
     private String lastName;
-    @Column(unique = true , nullable = false)
-    private String email;
     @Embedded // this annotation embedded value obj into entity
     private Address address;
 
@@ -39,7 +43,13 @@ public class Customer {
 
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL ,orphanRemoval = true )
-    List<Order> orderList = new ArrayList<>();
+    private List<Order> orderList = new ArrayList<>();
+
+    @OneToOne
+    @JsonBackReference
+
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
     @PrePersist
@@ -49,6 +59,11 @@ public class Customer {
     }
 
 
+    public void addOrder(Order order)
+    {
+        orderList.add(order);
+        order.setCustomer(this);
+    }
 
 
 

@@ -1,7 +1,7 @@
 package com.e_commerce.E_Commerce.REST.API.filter;
 
 import com.e_commerce.E_Commerce.REST.API.service.CustomUserDetailsService;
-import com.e_commerce.E_Commerce.REST.API.util.JwtTokenUtil;
+import com.e_commerce.E_Commerce.REST.API.util.JwtService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,26 +9,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
 @Component
 public class JwtAuthFilter  extends OncePerRequestFilter {
 
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
 
@@ -39,12 +35,15 @@ public class JwtAuthFilter  extends OncePerRequestFilter {
       String username = null;
 
 
-      if (authHeader != null && authHeader.startsWith("Bearer ")) {
-          token = authHeader.substring(7);
-      }
-      if (jwtTokenUtil.validateToken(token))
+        // Safer: skip if no Authorization header or path is public
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+      token = authHeader.substring(7);
+      if (jwtService.validateToken(token))
       {
-          Claims claims = jwtTokenUtil.extractAllClaims(token);
+          Claims claims = jwtService.extractAllClaims(token);
           username = claims.getSubject();
 
           // ====== extract roles ====
@@ -61,17 +60,16 @@ public class JwtAuthFilter  extends OncePerRequestFilter {
           );
           SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-          // delegate to next filter
-          filterChain.doFilter(request, response);
       }
 
+      filterChain.doFilter(request,response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // Skip filter for certain endpoints
-        return request.getServletPath().equals("/auth/login")
-                || request.getServletPath().equals("/auth/register")
-                || request.getServletPath().equals("/auth/refresh");
+        String path = request.getServletPath();
+        return path.startsWith("/api/v1/auth/login")
+                || path.startsWith("/api/v1/auth/register")
+                || path.startsWith("/api/v1/auth/refresh");
     }
 }

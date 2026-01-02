@@ -1,18 +1,17 @@
 package com.e_commerce.E_Commerce.REST.API.model;
 
-import com.e_commerce.E_Commerce.REST.API.model.enums.PaymentStatus;
+import com.e_commerce.E_Commerce.REST.API.payment.PaymentMethod;
+import com.e_commerce.E_Commerce.REST.API.payment.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -24,8 +23,12 @@ public class Payment
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @Column(name = "payment_method" , nullable = false)
-    private String paymentMethod;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+
     @Column(nullable = false)
     private BigDecimal amount;
 
@@ -34,6 +37,7 @@ public class Payment
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+
     private String TransactionId;
     private String paymentGatewayResponse; // represent response coming from gateway
 

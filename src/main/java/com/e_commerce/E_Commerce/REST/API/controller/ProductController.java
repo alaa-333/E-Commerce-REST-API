@@ -36,14 +36,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductResponseDTO getById(
+    public ResponseEntity<ProductResponseDTO> getById(
             @PathVariable("id")
             @NotNull(message = "Id must not be null")
             @Positive(message = "Id must be a positive number")
             Long id
     )
     {
-        return productService.getById(id);
+        return ResponseEntity.ok(productService.getById(id));
     }
 
     @PutMapping("/{id}")
@@ -59,11 +59,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public PaginationResponseDto<ProductResponseDTO> getAll(
+    public ResponseEntity<PaginationResponseDto<ProductResponseDTO>> getAll(
             @Valid PaginationRequestDto requestDto
             )
     {
-        return productService.getAll(requestDto);
+        return ResponseEntity.ok(productService.getAll(requestDto));
     }
 
     @DeleteMapping("{id}")
@@ -91,22 +91,22 @@ public class ProductController {
 
 
     @GetMapping("/name")
-    public PaginationResponseDto<ProductResponseDTO> filteredProductsByName(
+    public ResponseEntity<PaginationResponseDto<ProductResponseDTO>> filteredProductsByName(
             @RequestParam @NotNull(message = "name must be not null") String name,
             @Valid PaginationRequestDto requestDto
     )
     {
-        return productService
-                .getProductsByName(name ,requestDto);
+        return ResponseEntity.ok( productService
+                .getProductsByName(name ,requestDto));
     }
 
     @GetMapping("/category")
-    public PaginationResponseDto<ProductResponseDTO> getByCategory(
+    public ResponseEntity<PaginationResponseDto<ProductResponseDTO>> getByCategory(
             @RequestParam @NotNull(message = "category must be not null") String category,
             @Valid PaginationRequestDto requestDto
     )
     {
-        return productService.getProductsByCategory(category , requestDto);
+        return ResponseEntity.ok(productService.getProductsByCategory(category , requestDto));
     }
 
 

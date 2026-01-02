@@ -67,7 +67,7 @@ public class GlobalExceptionHandling {
                 .body(
                         ErrorResponse.of(
                                 ex.getErrorCode().getCode(),
-                                ex.getMessage(),
+                                ex.getDetailsMessage(),
                         HttpStatus.BAD_REQUEST.value(),
                         request.getRequestURI()
                         )

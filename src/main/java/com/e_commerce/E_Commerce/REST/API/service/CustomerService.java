@@ -1,26 +1,20 @@
 package com.e_commerce.E_Commerce.REST.API.service;
 
-import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerCreateRequestDTO;
+import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerCreateRequestDto;
 import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerUpdateReqDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.request.PaginationRequestDto;
 import com.e_commerce.E_Commerce.REST.API.dto.response.CustomerResponseDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.PaginationResponseDto;
 import com.e_commerce.E_Commerce.REST.API.exception.DuplicateResourceException;
-import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
-import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
 import com.e_commerce.E_Commerce.REST.API.exception.customer.CustomerNotFoundException;
 import com.e_commerce.E_Commerce.REST.API.mapper.CustomerMapper;
 import com.e_commerce.E_Commerce.REST.API.model.Customer;
-import com.e_commerce.E_Commerce.REST.API.model.enums.WhiteList;
 import com.e_commerce.E_Commerce.REST.API.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Locale;
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -32,13 +26,13 @@ public class CustomerService {
 
 
     //  CREATE NEW CUSTOMER OBJ
-    public CustomerResponseDTO createCustomer(CustomerCreateRequestDTO requestDTO) {
+    public CustomerResponseDTO createCustomer(CustomerCreateRequestDto requestDTO) {
 
         removeSpaces(requestDTO);
-        if (customerRepository.existsByEmail(requestDTO.getEmail()))
-        {
-            throw DuplicateResourceException.forCustomer(requestDTO.getEmail());
-        }
+//        if (customerRepository.existsByEmail(requestDTO.getEmail()))
+//        {
+//            throw DuplicateResourceException.forCustomer(requestDTO.getEmail());
+//        }
 
 
         Customer customer = customerMapper.toEntity(requestDTO);
@@ -58,13 +52,13 @@ public class CustomerService {
     }
 
     // GET CUSTOMER BY EMAIL
-    public CustomerResponseDTO getCustomerByEmail(String email)
-    {
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomerNotFoundException(email));
-
-        return customerMapper.toResponseDTO(customer);
-    }
+//    public CustomerResponseDTO getCustomerByEmail(String email)
+//    {
+//        Customer customer = customerRepository.findByEmail(email)
+//                .orElseThrow(() -> new CustomerNotFoundException(email));
+//
+//        return customerMapper.toResponseDTO(customer);
+//    }
 
     //  UPDATE CUSTOMER
     public CustomerResponseDTO updateCustomer(Long id , CustomerUpdateReqDTO updateReqDTO)
@@ -96,7 +90,7 @@ public class CustomerService {
 
 
 
-    private void removeSpaces(CustomerCreateRequestDTO requestDTO)
+    private void removeSpaces(CustomerCreateRequestDto requestDTO)
     {
         if (requestDTO.getFirstName() != null)
         {
@@ -106,10 +100,7 @@ public class CustomerService {
         {
             requestDTO.setLastName(requestDTO.getLastName().trim());
         }
-        if (requestDTO.getEmail() != null)
-        {
-            requestDTO.setEmail(requestDTO.getEmail().trim().toLowerCase());
-        }
+
     }
 
 

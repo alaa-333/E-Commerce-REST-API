@@ -5,12 +5,15 @@ import com.e_commerce.E_Commerce.REST.API.dto.request.PaymentUpdateRequestDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.PaymentResponseDTO;
 import com.e_commerce.E_Commerce.REST.API.model.Payment;
 import com.e_commerce.E_Commerce.REST.API.model.Product;
-import com.e_commerce.E_Commerce.REST.API.model.enums.PaymentStatus;
+import com.e_commerce.E_Commerce.REST.API.payment.PaymentStatus;
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
+@Mapper(componentModel = "spring")
 public interface PaymentMapper {
 
     // request to entity ===
@@ -40,27 +43,35 @@ public interface PaymentMapper {
         if (requestDTO == null || payment == null)
             return;
 
-        if (requestDTO.hasPaymentStatus()) {
-            PaymentStatus paymentStatus = PaymentStatus.valueOf(requestDTO.getPaymentStatus().trim().toUpperCase());
-            payment.setPaymentStatus(paymentStatus);
 
-            if (paymentStatus == PaymentStatus.SUCCESSFUL && payment.getPaymentDate() == null) {
-                payment.setPaymentDate(LocalDateTime.now());
-            }
+        String paymentStatusClone = "";
+            Optional.of(requestDTO.hasPaymentStatus())
+                    .ifPresent(status -> {
+                        if (status) {
+                            final PaymentStatus paymentStatus = PaymentStatus.valueOf(requestDTO.getPaymentStatus().trim().toUpperCase());
+                            payment.setPaymentStatus(paymentStatus);
 
+                            if (paymentStatus == PaymentStatus.SUCCESSFUL && payment.getPaymentDate() == null) {
+                                payment.setPaymentDate(LocalDateTime.now());
+                            }
 
-            if (requestDTO.hasTransactionId()) {
-                payment.setTransactionId(requestDTO.getTransactionId());
-            }
-
-            if (requestDTO.hasPaymentGatewayResponse()) {
-                payment.setPaymentGatewayResponse(requestDTO.getPaymentGatewayResponse());
-            }
+                          Optional.of(requestDTO.hasTransactionId())
+                                  .ifPresent(value -> {
+                                      if (value) {
+                                          payment.setTransactionId(requestDTO.getTransactionId());
+                                      }
+                            });
+                            Optional.of(requestDTO.hasPaymentGatewayResponse())
+                                    .ifPresent(value -> {
+                                        if (value) {
+                                            payment.setPaymentGatewayResponse(requestDTO.getPaymentGatewayResponse());
+                                        }
+                                    });
+                        }
+                    });
         }
 
 
-
-    }
     default Payment createNewPayment(PaymentRequestDTO requestDTO) {
         Payment payment = toEntity(requestDTO);
         payment.setPaymentStatus(PaymentStatus.PENDING);
@@ -71,5 +82,9 @@ public interface PaymentMapper {
     {
         return status != null  ?   status.name():"PENDING";
     }
+
+
+
+
 
 }

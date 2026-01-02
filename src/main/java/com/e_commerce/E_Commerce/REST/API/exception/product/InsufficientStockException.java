@@ -8,7 +8,7 @@ public class InsufficientStockException extends BusinessException {
 
     public InsufficientStockException(String productName, int requested, int available)
     {
-        super(ErrorCode.INSUFFICIENT_PRODUCT_STOCK,
+        super(ErrorCode.PRODUCT_INSUFFICIENT_STOCK,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 formatMessage(productName,requested,available)
         );

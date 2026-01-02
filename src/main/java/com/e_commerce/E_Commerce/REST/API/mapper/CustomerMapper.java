@@ -1,7 +1,7 @@
 package com.e_commerce.E_Commerce.REST.API.mapper;
 
 import com.e_commerce.E_Commerce.REST.API.dto.request.AddressRequestDTO;
-import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerCreateRequestDTO;
+import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerCreateRequestDto;
 import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerUpdateReqDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.AddressResponseDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.CustomerResponseDTO;
@@ -25,7 +25,7 @@ public interface CustomerMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "orderList", ignore = true)
     @Mapping(target = "address", source = "address")
-    Customer toEntity(CustomerCreateRequestDTO requestDTO);
+    Customer toEntity(CustomerCreateRequestDto requestDTO);
 
     // ======= ENTITY TO RESPONSE-DTO =======
     @Mapping(

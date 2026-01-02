@@ -42,7 +42,7 @@ public enum ErrorCode {
     UNREASONABLE_PRICE("BUS-001", "Price exceeds allowed maximum", HttpStatus.BAD_REQUEST),
 
     // Customer Logic Errors (CUS-XXX)
-    CUSTOMER_ALREADY_EXISTS("CUS-001", "Customer already exists with this email", HttpStatus.CONFLICT),
+    USER_ALREADY_EXISTS("CUS-001", "User already exists with this email", HttpStatus.CONFLICT),
     CUSTOMER_NOT_FOUND("CUS-002", "Customer not found", HttpStatus.NOT_FOUND),
     INVALID_CUSTOMER_DATA("CUS-003", "Customer data is invalid", HttpStatus.BAD_REQUEST),
     CUSTOMER_ADDRESS_NOT_FOUND("CUS-004", "Customer address not found", HttpStatus.NOT_FOUND),
@@ -50,7 +50,7 @@ public enum ErrorCode {
 
     // Product Errors (PRO-XXX)
     PRODUCT_NOT_FOUND("PRO-001", "Product not found", HttpStatus.NOT_FOUND),
-    INSUFFICIENT_PRODUCT_STOCK("PRO-002", "Insufficient product stock", HttpStatus.BAD_REQUEST),
+    PRODUCT_INSUFFICIENT_STOCK("PRO-002", "Insufficient product stock", HttpStatus.BAD_REQUEST),
     PRODUCT_DISABLED("PRO-003", "Product is disabled/unavailable", HttpStatus.BAD_REQUEST),
     PRODUCT_ALREADY_EXISTS("PRO-004", "A product with this name/code already exists", HttpStatus.CONFLICT),
     INVALID_PRODUCT_PRICE("PRO-005", "Product price is invalid", HttpStatus.BAD_REQUEST),
@@ -66,6 +66,7 @@ public enum ErrorCode {
     ORDER_VALIDATION_FAILED("ORD-005", "Order validation failed", HttpStatus.BAD_REQUEST),
     ORDER_ITEMS_EMPTY("ORD-006", "Order must contain at least one item", HttpStatus.BAD_REQUEST),
     ORDER_TOTAL_INVALID("ORD-007", "Order total amount must be greater than zero", HttpStatus.BAD_REQUEST),
+    ORDER_ITEM_NOT_FOUND("ORD-8", "Order item not found", HttpStatus.NOT_FOUND),
 
     // Payment Errors (PAY-XXX)
     PAYMENT_NOT_FOUND("PAY-001", "Payment not found", HttpStatus.NOT_FOUND),

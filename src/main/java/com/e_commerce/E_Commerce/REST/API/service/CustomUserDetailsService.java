@@ -2,6 +2,7 @@ package com.e_commerce.E_Commerce.REST.API.service;
 
 import com.e_commerce.E_Commerce.REST.API.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

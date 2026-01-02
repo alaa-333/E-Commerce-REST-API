@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,4 +27,6 @@ public class UserCreateRequestDto {
             message = "Password must contain uppercase, lowercase, number, and special character"
     )
     private String password;
+
+
 }

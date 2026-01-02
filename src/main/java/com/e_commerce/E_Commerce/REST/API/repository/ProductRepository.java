@@ -2,6 +2,7 @@ package com.e_commerce.E_Commerce.REST.API.repository;
 
 import com.e_commerce.E_Commerce.REST.API.model.Product;
 import jakarta.persistence.LockModeType;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,12 +27,12 @@ public interface ProductRepository extends JpaRepository<Product , Long> {
 
     Page<Product> searchByNameContainingIgnoreCase(String name , Pageable pageable);
 
+
     @Modifying
-    @Query (
-            "UPDATE Product p set p.stockQuantity = p.stockQuantity - :quantity "+
-                    "WHERE P.id = :id AND p.stockQuantity >= :quantity"
-    )
-    int reduceStock(@Param("id") Long id ,@Param("quantity") int quantity);
+    @Transactional // Required for DML operations (Update/Delete)
+    @Query("UPDATE Product p SET p.stockQuantity = p.stockQuantity - :quantity " +
+            "WHERE p.id = :id AND p.stockQuantity >= :quantity")
+    int reduceStock(@Param("id") Long id, @Param("quantity") int quantity);
 
     List<Product> findAllById(Long id);
 

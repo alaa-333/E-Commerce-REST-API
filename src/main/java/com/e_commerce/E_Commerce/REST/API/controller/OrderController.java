@@ -61,9 +61,11 @@ public class OrderController {
 
 
     @GetMapping
-    public ResponseEntity<List<OrderResponseDTO>> getAll()
+    public ResponseEntity<PaginationResponseDto<OrderResponseDTO>> getAll(
+            @Valid PaginationRequestDto requestDto
+    )
     {
-        List<OrderResponseDTO> responseDTOS = orderService.getAll();
+        PaginationResponseDto<OrderResponseDTO> responseDTOS = orderService.getAll(requestDto);
         return ResponseEntity.ok(responseDTOS);
     }
 

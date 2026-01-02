@@ -2,6 +2,8 @@ package com.e_commerce.E_Commerce.REST.API.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DialectOverride;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -17,8 +19,16 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@Where(clause = "active=true")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "products")
+@Table(
+        name = "products",
+        indexes = {
+                @Index(name = "idx_price" , columnList = "price"),
+                @Index(name = "idx_category" , columnList = "category"),
+                @Index(name = "idx_created_at", columnList = "created_at")
+        }
+)
 public class Product
 {
     @Id
