@@ -361,44 +361,31 @@ E-Commerce-REST-API/
 
 ### Request Flow
 
+```mermaid
+sequenceDiagram
+    participant Client
+    participant JwtAuthFilter
+    participant Controller
+    participant Service
+    participant Repository
+    participant Database
+    
+    Client->>JwtAuthFilter: HTTP Request
+    JwtAuthFilter->>JwtAuthFilter: Validate JWT token
+    JwtAuthFilter->>JwtAuthFilter: Extract user details
+    JwtAuthFilter->>Controller: Authenticated Request
+    Controller->>Controller: Validate request DTO
+    Controller->>Service: Business operation
+    Service->>Service: Apply business logic
+    Service->>Service: Manage transaction
+    Service->>Repository: Data access
+    Repository->>Database: Query/Update
+    Database-->>Repository: Result
+    Repository-->>Service: Data
+    Service-->>Controller: Response
+    Controller-->>Client: HTTP Response
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           HTTP Request Flow                                 │
-└─────────────────────────────────────────────────────────────────────────────┘
 
-Client Request
-     │
-     ▼
-┌─────────────────────┐
-│  JwtAuthFilter      │  ← Validates JWT token
-│  (Security Layer)   │  ← Extracts user details
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  Controller         │  ← Validates request DTO
-│  (REST Endpoints)   │  ← Maps HTTP to service calls
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  Service            │  ← Business logic
-│  (Business Layer)   │  ← Transaction management
-└──────────┬──────────┘
-           │
-           ├──────────────────┐
-           │                  │
-           ▼                  ▼
-┌─────────────────────┐  ┌─────────────────────┐
-│  Repository         │  │  External APIs      │
-│  (Data Access)      │  │  (Stripe, etc.)     │
-└──────────┬──────────┘  └──────────┬──────────┘
-           │                        │
-           ▼                        ▼
-┌─────────────────────┐  ┌─────────────────────┐
-│  Oracle Database    │  │  Payment Gateway    │
-└─────────────────────┘  └─────────────────────┘
-```
 
 <br/>
 
@@ -406,63 +393,28 @@ Client Request
 
 ## ▎Security
 
-<br/>
 
-### Authentication Flow
-
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    
+    Client->>Server: POST /api/v1/auth/signup
+    Note over Server: Create User<br/>Hash Password (BCrypt)<br/>Assign Role
+    Server-->>Client: 201 Created
+    
+    Client->>Server: POST /api/v1/auth/login
+    Note over Server: Validate Credentials<br/>Generate JWT (15 min)<br/>Generate Refresh Token (7 days)
+    Server-->>Client: 200 OK (accessToken, refreshToken)
+    
+    Client->>Server: GET /api/v1/products<br/>Authorization: Bearer JWT
+    Note over Server: Validate JWT<br/>Extract User Details<br/>Check Permissions
+    Server-->>Client: 200 OK (products)
+    
+    Client->>Server: POST /api/v1/auth/refresh
+    Note over Server: Validate Refresh Token<br/>Generate New JWT
+    Server-->>Client: 200 OK (accessToken, refreshToken)
 ```
-┌──────────┐                                    ┌──────────────┐
-│  Client  │                                    │   Server     │
-└─────┬────┘                                    └──────┬───────┘
-      │                                                │
-      │  POST /api/v1/auth/signup                     │
-      │  { email, password, firstName, lastName }     │
-      │──────────────────────────────────────────────>│
-      │                                                │
-      │                                                │  Create User
-      │                                                │  Hash Password (BCrypt)
-      │                                                │  Assign Role
-      │                                                │
-      │  201 Created                                   │
-      │  { message: "User registered successfully" }  │
-      │<──────────────────────────────────────────────│
-      │                                                │
-      │  POST /api/v1/auth/login                      │
-      │  { email, password }                          │
-      │──────────────────────────────────────────────>│
-      │                                                │
-      │                                                │  Validate Credentials
-      │                                                │  Generate JWT (15 min)
-      │                                                │  Generate Refresh Token (7 days)
-      │                                                │
-      │  200 OK                                        │
-      │  { accessToken, refreshToken, tokenType }     │
-      │<──────────────────────────────────────────────│
-      │                                                │
-      │  GET /api/v1/products                         │
-      │  Authorization: Bearer <JWT>                  │
-      │──────────────────────────────────────────────>│
-      │                                                │
-      │                                                │  Validate JWT
-      │                                                │  Extract User Details
-      │                                                │  Check Permissions
-      │                                                │
-      │  200 OK                                        │
-      │  { products: [...] }                          │
-      │<──────────────────────────────────────────────│
-      │                                                │
-      │  POST /api/v1/auth/refresh                    │
-      │  { refreshToken }                             │
-      │──────────────────────────────────────────────>│
-      │                                                │
-      │                                                │  Validate Refresh Token
-      │                                                │  Generate New JWT
-      │                                                │
-      │  200 OK                                        │
-      │  { accessToken, refreshToken, tokenType }     │
-      │<──────────────────────────────────────────────│
-```
-
 <br/>
 
 ### Security Configuration
@@ -518,8 +470,11 @@ Client Request
 - **JDBC Batching**: Batch size of 50 for bulk operations
 - **Order Inserts/Updates**: Hibernate groups operations by entity type
 - **Connection Pooling**: HikariCP for high-performance connections
-- **Indexes**: Strategic indexes on foreign keys and search fields
+- **Strategic Indexing**: Comprehensive index strategy on foreign keys, search fields, and frequently queried columns
 - **Lazy Loading**: Optimized entity relationships
+- **Query Optimization**: Efficient JOIN operations and fetch strategies
+
+> **📊 For detailed indexing strategy, see [DATABASE_INDEXING_STRATEGY.md](DATABASE_INDEXING_STRATEGY.md)**
 
 <br/>
 
