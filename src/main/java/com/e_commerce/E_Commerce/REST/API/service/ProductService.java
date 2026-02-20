@@ -26,6 +26,8 @@ import java.math.BigDecimal;
 @Service
 public class ProductService {
 
+    private static final BigDecimal MAX_PRICE = new BigDecimal("1000000");
+    private static final int MAX_STOCK_QUANTITY = 100000;
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
@@ -61,6 +63,8 @@ public class ProductService {
 
         return productMapper.toResponseDTO(product);
     }
+
+
 
     public ProductResponseDTO updateProduct(ProductUpdateRequestDTO requestDTO,Long productId)
     {
@@ -112,7 +116,7 @@ public class ProductService {
 
         PaginationRequestDto.validate(requestDto);
 
-        Page<Product> products =  productRepository.searchByNameContainingIgnoreCase(productName , requestDto.toPageable());
+        Page<Product> products =  productRepository.findByNameStartingWithIgnoreCase(productName , requestDto.toPageable());
 
       return  PaginationResponseDto.PaginationMetadata.of(
               products.map(productMapper::toResponseDTO)
@@ -152,13 +156,12 @@ public class ProductService {
     }
 
     public boolean isPriceReasonable(BigDecimal price) {
-        return price != null && price.compareTo(new BigDecimal("1000000")) < 0; // Max 1 million
+        return price != null && price.compareTo(MAX_PRICE) < 0;
     }
 
     public void validateStockQuantity(Integer stockQuantity ) {
-        if (stockQuantity != null && stockQuantity > 100000) {
+        if (stockQuantity != null && stockQuantity > MAX_STOCK_QUANTITY) {
             throw new ProductQuantityExceedException();
         }
     }
-
 }

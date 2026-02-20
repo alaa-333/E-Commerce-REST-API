@@ -12,8 +12,7 @@ public class ProductNotFoundException  extends ResourceNotFoundException {
         super(ErrorCode.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND, formatMessage("Product",identifier));
     }
 
-    public static String formatMessage(String resource , Object identifier)
-    {
+    public static String formatMessage(String resource, Object identifier) {
         return "%s not found with identifier: %s".formatted(resource, identifier);
     }
 }

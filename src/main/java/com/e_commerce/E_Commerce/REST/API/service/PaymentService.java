@@ -5,6 +5,7 @@ import com.e_commerce.E_Commerce.REST.API.dto.response.PaymentResponseDTO;
 import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
 import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
 import com.e_commerce.E_Commerce.REST.API.exception.order.OrderNotFoundException;
+import com.e_commerce.E_Commerce.REST.API.exception.payment.PaymentAmountMismatchException;
 import com.e_commerce.E_Commerce.REST.API.mapper.PaymentMapper;
 import com.e_commerce.E_Commerce.REST.API.model.Order;
 import com.e_commerce.E_Commerce.REST.API.model.Payment;
@@ -16,10 +17,12 @@ import com.e_commerce.E_Commerce.REST.API.repository.OrderRepository;
 import com.e_commerce.E_Commerce.REST.API.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.Mapping;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,6 +52,11 @@ public class PaymentService {
         Order order = orderRepository.findById(requestDTO.getOrderId())
                 .orElseThrow(() -> new OrderNotFoundException(requestDTO.getOrderId()));
 
+        // ensure requested amount equal total amount for this order
+        if (!Objects.equals(requestDTO.getAmount(), order.getTotalAmount())) {
+            throw new PaymentAmountMismatchException(order.getTotalAmount(), requestDTO.getAmount());
+        }
+
         // 3. Check if payment method is supported
         String paymentMethod = requestDTO.getPaymentMethod();
         if (!paymentStrategyFactory.isSupported(paymentMethod)) {
@@ -68,7 +76,7 @@ public class PaymentService {
                 .amount(requestDTO.getAmount())
                 .PaymentDate(LocalDateTime.now())
                 .paymentStatus(result.success() ? PaymentStatus.PENDING : PaymentStatus.FAILED)
-                .TransactionId(result.transactionId())
+                .transactionId(result.transactionId())
                 .paymentGatewayResponse(result.clientSecret())
                 .order(order)
                 .build();
@@ -84,19 +92,7 @@ public class PaymentService {
         }
 
         // 8. Return response DTO
-        return new PaymentResponseDTO(
-                savedPayment.getId(),
-                savedPayment.getPaymentMethod().toString(),
-                savedPayment.getAmount(),
-                null,
-                savedPayment.getPaymentDate(),
-                savedPayment.getPaymentStatus().name(),
-                savedPayment.getTransactionId(),
-                savedPayment.getPaymentGatewayResponse(),
-                false,
-                false,
-                null,
-                null);
+        return mapper.toResponseDTO(savedPayment);
     }
 
     /**
@@ -106,19 +102,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new ValidationException(ErrorCode.PAYMENT_NOT_FOUND));
 
-        return new PaymentResponseDTO(
-                payment.getId(),
-                payment.getPaymentMethod().toString(),
-                payment.getAmount(),
-                null,
-                payment.getPaymentDate(),
-                payment.getPaymentStatus().name(),
-                payment.getTransactionId(),
-                null, // Don't expose client secret on retrieval
-                PaymentStatus.SUCCESSFUL.equals(payment.getPaymentStatus()),
-                false,
-                null,
-                null);
+        return mapper.toResponseDTO(payment);
     }
 
     /**

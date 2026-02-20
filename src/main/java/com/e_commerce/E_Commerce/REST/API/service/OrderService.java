@@ -25,8 +25,10 @@ import com.e_commerce.E_Commerce.REST.API.model.enums.OrderStatus;
 import com.e_commerce.E_Commerce.REST.API.repository.CustomerRepository;
 import com.e_commerce.E_Commerce.REST.API.repository.OrderRepository;
 import com.e_commerce.E_Commerce.REST.API.repository.ProductRepository;
+import com.e_commerce.E_Commerce.REST.API.util.ValidationUtility;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,10 +39,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class OrderService {
+
+    private static final int ORDER_NUMBER_RANDOM_MULTIPLIER = 1000;
 
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
@@ -52,36 +57,35 @@ public class OrderService {
     public OrderResponseDTO createOrder(OrderCreateRequestDTO requestDTO)
     {
         // validate total amount > 0 && contain at least one order item
-        validateOrder(requestDTO.getOrderItems());
-     
-
-        // make sure quantity for each order is positive
-        validateQuantity(requestDTO.getOrderItems());
+        ValidationUtility.validateOrderItemsNotEmpty(requestDTO.getOrderItems());
+        ValidationUtility.validateOrderItemsQuantity(requestDTO.getOrderItems());
+        ValidationUtility.validateOrderTotalGreaterThanZero(requestDTO.getOrderItems());
 
         // ensure customer exist first -> and then you can make order
+        log.info("customer id :{}",requestDTO.getCustomerId());
         Customer customer = customerRepository.findById(requestDTO.getCustomerId())
                 .orElseThrow(() ->  new CustomerNotFoundException(requestDTO.getCustomerId()));
 
         // create order number
         String orderNumber = generateOrderNumber();
+        log.info("order number created :{}",orderNumber);
 
         Order order = orderMapper.createNewOrder(requestDTO,orderNumber);
+        log.info("order  :{}",order);
+
         order.setCustomer(customer);
 
+        List<OrderItemResponseDTO> orderItemResponseDTOS = requestDTO.getOrderItems().stream()
+                .map(item -> orderItemService.addOrderItem(order.getId(), item))
+                .toList();
 
-         List<OrderItemResponseDTO> orderItemResponseDTOS = requestDTO.getOrderItems().stream()
-                 .map(item -> orderItemService.addOrderItem(order.getId(), item))
-                 .toList();
+        List<OrderItem> orderItemList = order.getOrderItems();
+        log.info("o items: {}",orderItemList);
 
-         List<OrderItem> orderItemList = order.getOrderItems();
-
-
-         Set<Long> productsId = orderItemList
-                 .stream()
-                 .map(p -> p.getProduct().getId())
-                 .collect(Collectors.toSet());
-
-
+        Set<Long> productsId = orderItemList
+                .stream()
+                .map(p -> p.getProduct().getId())
+                .collect(Collectors.toSet());
 
         Map<Long, Product> productMap = productRepository.findAllById(productsId)
                 .stream()
@@ -91,23 +95,19 @@ public class OrderService {
                 ));
 
         // fetch products and set in orders items
-        for (int i = 0 ; i < orderItemList.size() ; i++)
-        {
+        for (int i = 0; i < orderItemList.size(); i++) {
             OrderItemCreateRequestDTO itemDto = requestDTO.getOrderItems().get(i);
             OrderItem orderItem = orderItemList.get(i);
 
             Product product = productMap.get(itemDto.getProductId());
-            if (product == null)
-            {
-                throw new ValidationException(ErrorCode.PRODUCT_INSUFFICIENT_STOCK);
+            if (product == null) {
+                throw new ValidationException(ErrorCode.PRODUCT_NOT_FOUND);
             }
             orderItem.setProduct(product);
         }
         order.setOrderItems(orderItemList);
         Order savedOrder = orderRepository.save(order);
         return orderMapper.toResponseDTO(savedOrder);
-
-
     }
 
     public OrderResponseDTO getOrderById(Long id)
@@ -153,7 +153,12 @@ public class OrderService {
     public PaginationResponseDto<OrderResponseDTO> getOrderByStatus(String status , PaginationRequestDto requestDto)
     {
         PaginationRequestDto.validate(requestDto);
-        OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
+        OrderStatus orderStatus;
+        try {
+            orderStatus = OrderStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException(ErrorCode.INVALID_ENUM_VALUE);
+        }
         Page<Order> orderPage =  orderRepository.findByOrderStatus(orderStatus , requestDto.toPageable());
         return PaginationResponseDto.PaginationMetadata.of(
                 orderPage.map(orderMapper::toResponseDTO)
@@ -163,41 +168,6 @@ public class OrderService {
 
     private String generateOrderNumber()
     {
-        return "ORD-" + System.currentTimeMillis() + "-" + (int)(Math.random() * 1000);
+        return "ORD-" + System.currentTimeMillis() + "-" + (int)(Math.random() * ORDER_NUMBER_RANDOM_MULTIPLIER);
     }
-
-    // Custom validation methods
-    private void validateOrder(List<OrderItemCreateRequestDTO> orderItems) {
-
-        if (orderItems == null || orderItems.isEmpty() )
-        {
-            throw new OrderItemsEmptyException();
-        }
-        if ( calculateTotalAmount(orderItems).compareTo(BigDecimal.ZERO) <= 0)
-        {
-            throw new OrderTotalInvalidException();
-        }
-    }
-
-    public static BigDecimal calculateTotalAmount(List<OrderItemCreateRequestDTO> orderItems) {
-        if (orderItems == null || orderItems.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        return orderItems.stream()
-                .map(OrderItemCreateRequestDTO::getItemTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private void validateQuantity(List<OrderItemCreateRequestDTO> orderItems) {
-        if (orderItems != null) {
-            for (OrderItemCreateRequestDTO item : orderItems) {
-                if (item.getQuantity() <= 0) {
-                    throw new ValidationException(ErrorCode.INVALID_QUANTITY);
-                }
-            }
-        }
-    }
-
-
-
 }
