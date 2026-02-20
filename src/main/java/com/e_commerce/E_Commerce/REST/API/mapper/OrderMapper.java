@@ -10,7 +10,7 @@ import com.e_commerce.E_Commerce.REST.API.model.Order;
 import com.e_commerce.E_Commerce.REST.API.model.OrderItem;
 import com.e_commerce.E_Commerce.REST.API.model.Payment;
 import com.e_commerce.E_Commerce.REST.API.model.enums.OrderStatus;
-import com.e_commerce.E_Commerce.REST.API.service.OrderService;
+import com.e_commerce.E_Commerce.REST.API.util.ValidationUtility;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -22,8 +22,6 @@ import java.util.List;
 @Mapper(componentModel = "spring",
 nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface OrderMapper {
-
-    // ======== REQUEST TO ENTITY ======== /
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "orderDate", ignore = true)
@@ -43,9 +41,7 @@ public interface OrderMapper {
     @Mapping(target = "totalAmount", ignore = true)
     void updateEntityFromDTO(OrderUpdateRequestDTO requestDTO, @MappingTarget Order order);
 
-
     OrderResponseDTO toResponseDTO(Order order);
-
 
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "product.name", target = "productName")
@@ -54,34 +50,26 @@ public interface OrderMapper {
 
     PaymentResponseDTO toPaymentResponseDTO(Payment payment);
 
-
     default Order createNewOrder(OrderCreateRequestDTO requestDTO, String orderNumber) {
-        Order order = toEntity(requestDTO); // create order after mapping into entity
-        order.setOrderNumber(orderNumber); // assign order number
-        order.setOrderStatus(OrderStatus.PENDING); // take default status
-        order.setTotalAmount(OrderService.calculateTotalAmount(requestDTO.getOrderItems()));
+        Order order = toEntity(requestDTO);
+        order.setOrderNumber(orderNumber);
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setTotalAmount(ValidationUtility.calculateOrderTotal(requestDTO.getOrderItems()));
         return order;
     }
 
-
-
-
-
-    default OrderItem createOrderItem(OrderItemCreateRequestDTO requestDTO,Order order )
-    {
+    default OrderItem createOrderItem(OrderItemCreateRequestDTO requestDTO, Order order) {
         OrderItem orderItem = new OrderItem();
         orderItem.setQuantity(requestDTO.getQuantity());
         orderItem.setUnitPrice(requestDTO.getUnitPrice());
         orderItem.setOrder(order);
         return orderItem;
-
     }
-    default List<OrderItem> toOrderItemsEntities(List<OrderItemCreateRequestDTO> requestDTOS, Order order)
-    {
-        if (requestDTOS == null)
-                return List.of();
 
-
-        return requestDTOS.stream().map(dto -> createOrderItem(dto,order)).toList();
+    default List<OrderItem> toOrderItemsEntities(List<OrderItemCreateRequestDTO> requestDTOS, Order order) {
+        if (requestDTOS == null) {
+            return List.of();
+        }
+        return requestDTOS.stream().map(dto -> createOrderItem(dto, order)).toList();
     }
 }

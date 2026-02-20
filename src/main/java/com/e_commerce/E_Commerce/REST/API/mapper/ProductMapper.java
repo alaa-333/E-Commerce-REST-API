@@ -14,10 +14,10 @@ nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ProductMapper {
 
     // ======== to Entity ==========
-    @Mapping(target = "id" , ignore = true)
-    @Mapping(target = "active" , ignore = true)
-    @Mapping(target = "itemList" , ignore = true)
-    @Mapping(target = "createdAt" , ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "itemList", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     Product toEntity(ProductCreateRequestDTO requestDTO);
 
     // ===== entity to response Dto
