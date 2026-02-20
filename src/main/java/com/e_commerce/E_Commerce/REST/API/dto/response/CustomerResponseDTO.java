@@ -1,10 +1,12 @@
 package com.e_commerce.E_Commerce.REST.API.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CustomerResponseDTO
         (

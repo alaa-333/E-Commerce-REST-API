@@ -2,9 +2,11 @@ package com.e_commerce.E_Commerce.REST.API.dto.response;
 
 import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
 import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 
+@Builder
 public record ProductResponseDTO
         (
                 Long id,

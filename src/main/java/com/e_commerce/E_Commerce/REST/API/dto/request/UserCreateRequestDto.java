@@ -13,8 +13,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateRequestDto {
-
+public class UserCreateRequestDTO {
 
     @NotBlank(message = "email is required")
     @Email(message = "invalid email format")
@@ -22,11 +21,7 @@ public class UserCreateRequestDto {
 
     @NotBlank(message = "password is required")
     @Size(min = 8, max = 32, message = "Password must be 8–32 characters")
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,32}$",
-            message = "Password must contain uppercase, lowercase, number, and special character"
-    )
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,32}$", message = "Password must contain uppercase, lowercase, number, and special character")
     private String password;
-
 
 }

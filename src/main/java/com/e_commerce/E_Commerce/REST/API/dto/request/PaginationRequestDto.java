@@ -2,15 +2,17 @@ package com.e_commerce.E_Commerce.REST.API.dto.request;
 
 import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
 import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
-import com.e_commerce.E_Commerce.REST.API.model.enums.WhiteList;
+import com.e_commerce.E_Commerce.REST.API.model.enums.PaginationColumnsWhiteList;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,13 +45,13 @@ public class PaginationRequestDto {
     public static void validate(PaginationRequestDto requestDto)
     {
         String apiField = requestDto.getSortBy();
-        if (!WhiteList.isValid(apiField))
+        if (!PaginationColumnsWhiteList.isValid(apiField))
         {
             throw new ValidationException(
                     ErrorCode.INVALID_SORT_PARAMETER,
                     String.format("Invalid sort field '%s'. Allowed fields are: %s",
                             apiField,
-                            String.join(", ", WhiteList.getAllowedFields()))
+                            String.join(", ", PaginationColumnsWhiteList.getAllowedFields()))
             );
         }
 

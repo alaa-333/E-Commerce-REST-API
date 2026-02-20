@@ -1,6 +1,6 @@
 package com.e_commerce.E_Commerce.REST.API.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderItemUpdateRequestDTO {
 
-    @NotBlank(message = "order Quantity must be not blank")
-    @Positive(message = "order Quantity must be positive value")
+    @NotNull(message = "Order quantity cannot be null")
+    @Positive(message = "Order quantity must be positive")
     private Integer orderQuantity;
-
-
 }

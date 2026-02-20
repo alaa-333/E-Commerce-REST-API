@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CustomerCreateRequestDto {
+public class CustomerCreateRequestDTO {
 
     @NotBlank(message = "First name is required")
     @Pattern(regexp = "^[a-zA-Z ]{2,50}$", message = "First name must be 2-50 alphabetic characters")
@@ -23,8 +23,6 @@ public class CustomerCreateRequestDto {
     @Pattern(regexp = "^[a-zA-Z ]{2,50}$", message = "First name must be 2-50 alphabetic characters")
     private String lastName;
 
-
-
     @NotBlank(message = "phone number is required")
     @Pattern(regexp = "^\\+?[0-9\\-\\s()]{10,15}$", message = "Invalid phone number format")
     private String phone;
@@ -32,11 +30,5 @@ public class CustomerCreateRequestDto {
     @NotNull(message = "address is required")
     @Valid
     private AddressRequestDTO address;
-
-
-
-
-
-
 
 }

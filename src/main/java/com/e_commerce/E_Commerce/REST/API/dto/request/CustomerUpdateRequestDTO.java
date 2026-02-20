@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerUpdateReqDTO {
-
+public class CustomerUpdateRequestDTO {
 
     @Pattern(regexp = "^[a-zA-Z ]{2,50}$", message = "First name must be 2-50 alphabetic characters")
     private String firstName;
@@ -27,8 +26,5 @@ public class CustomerUpdateReqDTO {
     private String phone;
 
     private AddressRequestDTO address;
-
-
-
 
 }

@@ -54,9 +54,6 @@ public class PaymentRequestDTO {
             this.paymentMethod = this.paymentMethod.trim().toUpperCase();
         }
     }
-    public boolean requiresCreditCardDetails() {
-        return "CREDIT_CARD".equals(paymentMethod);
-    }
 
 }
 

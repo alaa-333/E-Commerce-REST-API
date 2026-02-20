@@ -11,13 +11,13 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignupRequestDto {
+public class SignupRequestDTO {
 
     @JsonProperty("user")
     @Valid
-    private UserCreateRequestDto userCreateRequestDto;
+    private UserCreateRequestDTO userCreateRequestDto;
 
     @JsonProperty("customer")
     @Valid
-    private CustomerCreateRequestDto customerCreateRequestDto;
+    private CustomerCreateRequestDTO customerCreateRequestDto;
 }

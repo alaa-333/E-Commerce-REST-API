@@ -2,6 +2,7 @@ package com.e_commerce.E_Commerce.REST.API.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ public class PaginationResponseDto<T> {
 
 
 
+    @Builder
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
