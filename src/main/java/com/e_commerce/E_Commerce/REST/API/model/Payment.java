@@ -38,12 +38,13 @@ public class Payment
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
-    private String TransactionId;
+    @Column(name = "transaction_id", unique = true)
+    private String transactionId;
     private String paymentGatewayResponse; // represent response coming from gateway
 
 
     @OneToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id" , unique = true)
     private Order order;
 
 

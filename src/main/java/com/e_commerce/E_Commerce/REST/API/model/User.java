@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
+@Builder
 @Entity
 @Table(name = "users")
 @Getter
@@ -48,14 +50,14 @@ public class User implements UserDetails {
 
     // Timestamps
     @CreatedDate
-    @Column(updatable = false, nullable = false)
+    @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JsonManagedReference
     private Customer customer;
 

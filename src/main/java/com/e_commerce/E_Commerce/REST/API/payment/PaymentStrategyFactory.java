@@ -1,5 +1,7 @@
 package com.e_commerce.E_Commerce.REST.API.payment;
 
+import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
+import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -39,9 +41,10 @@ public class PaymentStrategyFactory {
     public PaymentStrategy getStrategy(String paymentMethod) {
         PaymentStrategy strategy = strategyMap.get(paymentMethod.toUpperCase());
         if (strategy == null) {
-            throw new IllegalArgumentException(
-                    "Unsupported payment method: " + paymentMethod +
-                            ". Supported methods: " + strategyMap.keySet());
+            throw new ValidationException(
+                    ErrorCode.INVALID_PAYMENT_METHOD,
+                    String.format("supported payments method %s",strategyMap.keySet())
+            );
         }
         return strategy;
     }

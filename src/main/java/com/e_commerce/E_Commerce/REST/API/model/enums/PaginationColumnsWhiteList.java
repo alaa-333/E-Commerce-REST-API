@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
-public enum WhiteList {
+public enum PaginationColumnsWhiteList {
 
     // ======= PRODUCT FIELDS ========
     PRODUCT_ID("id", "product_id"),
@@ -28,15 +28,15 @@ public enum WhiteList {
     private final String apiField;
     private final String databaseColumn;
 
-    WhiteList(String apiField , String databaseColumn)
+    PaginationColumnsWhiteList(String apiField , String databaseColumn)
     {
         this.apiField = apiField;
         this.databaseColumn = databaseColumn;
     }
 
-    private static final Map<String , WhiteList> API_FIELDS = Arrays.stream(values())
+    private static final Map<String , PaginationColumnsWhiteList> API_FIELDS = Arrays.stream(values())
             .collect(Collectors.toMap(
-                    WhiteList::getApiField,
+                    PaginationColumnsWhiteList::getApiField,
                     p -> p,
                     (p1 , p2) -> p1
             ));
@@ -49,7 +49,7 @@ public enum WhiteList {
     public static List<String> getAllowedFields()
     {
         return Arrays.stream(values())
-                .map(WhiteList::getApiField)
+                .map(PaginationColumnsWhiteList::getApiField)
                 .toList();
     }
 }

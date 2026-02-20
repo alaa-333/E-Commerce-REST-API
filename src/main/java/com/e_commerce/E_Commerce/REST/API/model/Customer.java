@@ -45,9 +45,9 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL ,orphanRemoval = true )
     private List<Order> orderList = new ArrayList<>();
 
-    @OneToOne
-    @JsonBackReference
 
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
