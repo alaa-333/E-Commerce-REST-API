@@ -1,8 +1,8 @@
 package com.e_commerce.E_Commerce.REST.API.controller;
 
-import com.e_commerce.E_Commerce.REST.API.dto.request.LoginRequestDto;
+import com.e_commerce.E_Commerce.REST.API.dto.request.LoginRequestDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.request.RefreshTokenRequest;
-import com.e_commerce.E_Commerce.REST.API.dto.request.SignupRequestDto;
+import com.e_commerce.E_Commerce.REST.API.dto.request.SignupRequestDTO;
 import com.e_commerce.E_Commerce.REST.API.service.AuthService;
 import com.e_commerce.E_Commerce.REST.API.util.JwtService;
 import com.e_commerce.E_Commerce.REST.API.util.JwtResponse;
@@ -32,42 +32,31 @@ public class AuthController {
 
     private final AuthService authService;
 
-    private final  JwtService jwtService;
-
-    // =========== LOGIN =============
+    private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login( @RequestBody @Valid LoginRequestDto requestDto) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDTO requestDto) {
 
         JwtResponse response = authService.login(requestDto);
-        // Set cookies
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, buildAccessTokenCookie(response.getAccessToken()).toString())
                 .header(HttpHeaders.SET_COOKIE, buildRefreshTokenCookie(response.getRefreshToken()).toString())
-                .header(HttpHeaders.SET_COOKIE, buildCsrfCookie().toString()) // CSRF token
+                .header(HttpHeaders.SET_COOKIE, buildCsrfCookie().toString())
                 .body(Map.of("message", "Login successful"));
     }
 
-    // =========== REFRESH =============
     @PostMapping("/refresh")
-    public ResponseEntity<JwtResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest request)
-    {
+    public ResponseEntity<JwtResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
 
         return ResponseEntity.ok(authService.refreshToken(request));
 
     }
 
-    // =========== REGISTER =============
     @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register( @RequestBody @Valid SignupRequestDto requestDto)
-    {
+    public ResponseEntity<JwtResponse> register(@RequestBody @Valid SignupRequestDTO requestDto) {
         return ResponseEntity.ok(authService.register(requestDto));
     }
 
-
-
-
-    // 🛠️ Helpers
     private String getCookieValue(HttpServletRequest req, String name) {
         return Optional.ofNullable(req.getCookies())
                 .stream()
@@ -81,7 +70,7 @@ public class AuthController {
     private ResponseCookie buildAccessTokenCookie(String token) {
         return ResponseCookie.from("access_token", token)
                 .httpOnly(true)
-                .secure(true) // HTTPS only
+                .secure(true)
                 .sameSite("lax")
                 .path("/auth/login")
                 .maxAge(jwtService.getJwtExpiration() / 1000)
@@ -93,23 +82,20 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")
-                .path("/refresh") // restrict to /refresh endpoint
+                .path("/refresh")
                 .maxAge(jwtService.getRefreshExpiration() / 1000)
                 .build();
     }
 
     private ResponseCookie buildCsrfCookie() {
         String csrfToken = UUID.randomUUID().toString();
-        return ResponseCookie.from("XSRF-TOKEN", csrfToken) // readable by JS
-                .httpOnly(false) // ✅ required so JS can read & send in header
+        return ResponseCookie.from("XSRF-TOKEN", csrfToken)
+                .httpOnly(false)
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
                 .maxAge(jwtService.getJwtExpiration() / 1000)
                 .build();
     }
-
-
-
 
 }

@@ -1,9 +1,9 @@
 package com.e_commerce.E_Commerce.REST.API.service;
 
-import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerCreateRequestDto;
-import com.e_commerce.E_Commerce.REST.API.dto.request.SignupRequestDto;
-import com.e_commerce.E_Commerce.REST.API.dto.request.UserCreateRequestDto;
-import com.e_commerce.E_Commerce.REST.API.dto.request.UserUpdateRequestDto;
+import com.e_commerce.E_Commerce.REST.API.dto.request.CustomerCreateRequestDTO;
+import com.e_commerce.E_Commerce.REST.API.dto.request.SignupRequestDTO;
+import com.e_commerce.E_Commerce.REST.API.dto.request.UserCreateRequestDTO;
+import com.e_commerce.E_Commerce.REST.API.dto.request.UserUpdateRequestDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.UserResponse;
 import com.e_commerce.E_Commerce.REST.API.exception.ErrorCode;
 import com.e_commerce.E_Commerce.REST.API.exception.ValidationException;
@@ -60,9 +60,9 @@ class UserServiceTest {
             // Arrange
             String email = "333alaamo@gmail.com";
 
-            SignupRequestDto dto = mock(SignupRequestDto.class);
-            UserCreateRequestDto userCreateDto = mock(UserCreateRequestDto.class);
-            CustomerCreateRequestDto customerCreateDto = mock(CustomerCreateRequestDto.class);
+            SignupRequestDTO dto = mock(SignupRequestDTO.class);
+            UserCreateRequestDTO userCreateDto = mock(UserCreateRequestDTO.class);
+            CustomerCreateRequestDTO customerCreateDto = mock(CustomerCreateRequestDTO.class);
 
             when(dto.getUserCreateRequestDto()).thenReturn(userCreateDto);
             when(dto.getCustomerCreateRequestDto()).thenReturn(customerCreateDto);
@@ -102,8 +102,8 @@ class UserServiceTest {
             // Arrange
             String email = "333alaamo@gmail.com";
 
-            SignupRequestDto dto = mock(SignupRequestDto.class);
-            UserCreateRequestDto userCreateDto = mock(UserCreateRequestDto.class);
+            SignupRequestDTO dto = mock(SignupRequestDTO.class);
+            UserCreateRequestDTO userCreateDto = mock(UserCreateRequestDTO.class);
 
             when(dto.getUserCreateRequestDto()).thenReturn(userCreateDto);
             when(userCreateDto.getEmail()).thenReturn(email);
@@ -213,7 +213,7 @@ class UserServiceTest {
             String dtoEmail = "newEmail@gmail.com";
 
             User dbUser = mock(User.class);
-            UserUpdateRequestDto dto = mock(UserUpdateRequestDto.class);
+            UserUpdateRequestDTO dto = mock(UserUpdateRequestDTO.class);
             User updatedUser = mock(User.class);
 
             // Real DTO for response

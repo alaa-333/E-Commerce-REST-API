@@ -1,6 +1,6 @@
 package com.e_commerce.E_Commerce.REST.API.controller;
 
-import com.e_commerce.E_Commerce.REST.API.dto.request.UserUpdateRequestDto;
+import com.e_commerce.E_Commerce.REST.API.dto.request.UserUpdateRequestDTO;
 import com.e_commerce.E_Commerce.REST.API.dto.response.UserResponse;
 import com.e_commerce.E_Commerce.REST.API.mapper.UserMapper;
 import com.e_commerce.E_Commerce.REST.API.model.Customer;
@@ -31,6 +31,12 @@ class UserControllerTest {
 
         @MockitoBean
         private UserService userService;
+
+        @MockitoBean
+        private com.e_commerce.E_Commerce.REST.API.util.JwtService jwtService;
+
+        @MockitoBean
+        private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
         @Autowired
         private UserMapper userMapper;
@@ -87,7 +93,7 @@ class UserControllerTest {
                 @DisplayName("Should update user when user exists")
                 void updateUser_whenUserExist_shouldUpdated() throws Exception {
 
-                        when(userService.updateUser(anyLong(), any(UserUpdateRequestDto.class))).thenReturn(
+                        when(userService.updateUser(anyLong(), any(UserUpdateRequestDTO.class))).thenReturn(
                                         UserResponse.builder()
                                                         .id(1L)
                                                         .email("111lollol@gmail.com")
@@ -102,7 +108,7 @@ class UserControllerTest {
                                         .andExpect(jsonPath("$.email").value("111lollol@gmail.com"));
 
                         // verify
-                        verify(userService).updateUser(anyLong(), any(UserUpdateRequestDto.class));
+                        verify(userService).updateUser(anyLong(), any(UserUpdateRequestDTO.class));
                 }
         }
 
