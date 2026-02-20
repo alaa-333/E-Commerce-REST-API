@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,52 +18,63 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Component
-public class JwtAuthFilter  extends OncePerRequestFilter {
+public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-      String authHeader = request.getHeader("Authorization");
-      String token = null;
-      String username = null;
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
+            throws ServletException, IOException {
+        String authHeader = request.getHeader("Authorization");
 
-
-        // Safer: skip if no Authorization header or path is public
+        // Skip if no Authorization header or not Bearer token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-      token = authHeader.substring(7);
-      if (jwtService.validateToken(token))
-      {
-          Claims claims = jwtService.extractAllClaims(token);
-          username = claims.getSubject();
 
-          // ====== extract roles ====
-          List<SimpleGrantedAuthority> authorities = ((List<?>) claims.get("roles")).stream()
-                  .map(authority -> new SimpleGrantedAuthority((String) authority))
-                  .toList();
-          UserDetails userDetails = new User(username , "", authorities);
+        try {
+            String token = authHeader.substring(7);
+            
+            if (jwtService.validateToken(token)) {
+                Claims claims = jwtService.extractAllClaims(token);
+                String username = claims.getSubject();
 
-          UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                  userDetails,
-                  null,
-                  authorities
+                // Extract roles with null safety
+                Object rolesObj = claims.get("roles");
+                List<SimpleGrantedAuthority> authorities;
+                
+                if (rolesObj instanceof List<?> rolesList && !rolesList.isEmpty()) {
+                    authorities = rolesList.stream()
+                            .filter(role -> role instanceof String)
+                            .map(role -> new SimpleGrantedAuthority((String) role))
+                            .toList();
+                } else {
+                    log.warn("No roles found in JWT token for user: {}", username);
+                    authorities = Collections.emptyList();
+                }
 
-          );
-          SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                UserDetails userDetails = new User(username, "", authorities);
 
-      }
+                UsernamePasswordAuthenticationToken authenticationToken = 
+                        new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                        
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                log.debug("Authentication set for user: {}", username);
+            }
+        } catch (Exception e) {
+            log.error("Error processing JWT token: {}", e.getMessage());
+            // Continue filter chain even if token processing fails
+        }
 
-      filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 
     @Override
@@ -70,6 +82,7 @@ public class JwtAuthFilter  extends OncePerRequestFilter {
         String path = request.getServletPath();
         return path.startsWith("/api/v1/auth/login")
                 || path.startsWith("/api/v1/auth/register")
-                || path.startsWith("/api/v1/auth/refresh");
+                || path.startsWith("/api/v1/auth/refresh")
+                || path.startsWith("/api/v1/auth/signup");
     }
 }

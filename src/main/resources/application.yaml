@@ -8,7 +8,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -30,4 +30,9 @@ jwt:
 
 stripe:
   api:
-    key: ${STRIPE_API_KEY}
+    key: sk_test_51Sl3cIPd5RZSTJk7dJSVPZ1H8ucUEBWO4IaiI7lJBr5CQEhWHhdf8oZfM87CHLz0S5k2LYDkoj5Uqi5ONsRow4NW001HG1kcSl
+
+# Application Configuration
+app:
+  admin:
+    emails: ${ADMIN_EMAILS:admin@example.com}  # Comma-separated list of admin emails

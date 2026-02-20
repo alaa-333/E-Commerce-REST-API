@@ -41,12 +41,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAuthority(Role.ROLE_ADMIN.name())
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAuthority(Role.ROLE_ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasAuthority(Role.ROLE_ADMIN.name())
-                        .requestMatchers("/api/v1/customers/**").hasAuthority(Role.ROLE_ADMIN.name())
-                        .requestMatchers("/api/v1/orders/**").hasAnyAuthority(Role.ROLE_USER.name(), Role.ROLE_ADMIN.name())
-                        .requestMatchers("/api/v1/payments/**").hasAnyAuthority(Role.ROLE_USER.name(), Role.ROLE_ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers("/api/v1/customers/**").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers("/api/v1/orders/**").hasAnyAuthority(Role.ROLE_USER.toString(), Role.ROLE_ADMIN.toString())
+                        .requestMatchers("/api/v1/payments/**").hasAnyAuthority(Role.ROLE_USER.toString(), Role.ROLE_ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
