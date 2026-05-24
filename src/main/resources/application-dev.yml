@@ -2,8 +2,9 @@ spring:
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
     url: jdbc:oracle:thin:@//localhost:1521/ECOMMERCE
-    username: ${DB_USERNAME:ecommerce_dev}
+    username: ${DB_USERNAME:ecommerce}
     password: ${DB_PASSWORD:dev_password}
+
 
   jpa:
     hibernate:
