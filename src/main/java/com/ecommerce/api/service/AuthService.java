@@ -138,7 +138,7 @@ public class AuthService {
                 .userId(user.getId())
                 .tokenHash(encoder.encode(newRefreshToken))
                 .userRoles(user.getRoles().stream().map(Enum::toString).collect(Collectors.toSet()))
-                .expiresAt(LocalDateTime.now().plusDays(jwtService.getRefreshExpiration()))
+                .expiresAt(LocalDateTime.now().plusSeconds(jwtService.getRefreshExpiration() / 1000))
                 .revoked(false)
                 .build();
 
