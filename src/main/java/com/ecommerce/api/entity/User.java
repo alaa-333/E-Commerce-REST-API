@@ -3,10 +3,12 @@ package com.ecommerce.api.entity;
 import com.ecommerce.api.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 @Setter
 @Builder
 @Table(name = "users")
+
+@SQLRestriction("deleted = false")
 public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "username", unique = true, nullable = false)
@@ -31,6 +35,13 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     @Builder.Default
     private boolean enabled = true;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @Column(name = "account_non_locked", nullable = false)
     @Builder.Default
