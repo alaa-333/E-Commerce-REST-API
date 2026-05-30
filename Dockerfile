@@ -1,4 +1,4 @@
- Stage 1: Build
+# Stage 1: Build
 FROM eclipse-temurin:23-jdk AS build
 WORKDIR /app
 COPY pom.xml .

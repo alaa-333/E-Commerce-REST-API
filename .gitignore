@@ -1,8 +1,10 @@
 HELP.md
+ROADMAP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+src/test/java/com/ecommerce/api/service/**
 
 ### STS ###
 .apt_generated
