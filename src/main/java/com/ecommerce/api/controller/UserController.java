@@ -3,6 +3,7 @@ package com.ecommerce.api.controller;
 
 import com.ecommerce.api.dto.request.user.UpdateUserRequest;
 import com.ecommerce.api.dto.response.ApiResponse;
+import com.ecommerce.api.dto.response.PagedResponse;
 import com.ecommerce.api.dto.response.UserResponse;
 import com.ecommerce.api.service.UserService;
 import jakarta.validation.Valid;
@@ -19,7 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/{id")
+    @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(
             @PathVariable
             @Positive(message = "id must be a positive value")
@@ -32,6 +33,17 @@ public class UserController {
         );
     }
 
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PagedResponse<UserResponse>>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        var response = userService.getAllUsers(page, size);
+        return ResponseEntity.ok(
+                ApiResponse.success(response)
+        );
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> updateUserById(
