@@ -1,19 +1,24 @@
 package com.ecommerce.api.service;
 
 import com.ecommerce.api.dto.request.user.UpdateUserRequest;
+import com.ecommerce.api.dto.response.PagedResponse;
 import com.ecommerce.api.dto.response.UserResponse;
 import com.ecommerce.api.entity.User;
 import com.ecommerce.api.exception.EcommerceAppException;
 import com.ecommerce.api.exception.ErrorCode;
 import com.ecommerce.api.exception.ResourceNotFoundException;
 import com.ecommerce.api.mapper.UserMapper;
+import com.ecommerce.api.repository.RefreshTokenRepository;
 import com.ecommerce.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 /**
  * Service for user management operations.
@@ -25,6 +30,7 @@ public class UserService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -32,11 +38,11 @@ public class UserService {
      * Users can only access their own profile.
      */
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public UserResponse getUser(Long id) {
 
         log.info("fetching user with id: {}", id);
 
-        checkUserAuthorization(id);
 
         var userResponse = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.USER_NOT_FOUND, "user not found with id: " + id));
@@ -48,10 +54,10 @@ public class UserService {
      * Update user profile and password.
      */
     @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public boolean updateUser(Long id, UpdateUserRequest request) {
         log.info("updating user with id: {}", id);
 
-        checkUserAuthorization(id);
 
         var user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                         ErrorCode.USER_NOT_FOUND, "user not found with id: " + id));
@@ -89,10 +95,9 @@ public class UserService {
      * Delete user account.
      */
     @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public boolean deleteUser(Long id, String passwordConfirmation) {
         log.info("deleting user with id: {}", id);
-
-        checkUserAuthorization(id);
 
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.USER_NOT_FOUND, "user not found with id: " + id));
@@ -102,7 +107,14 @@ public class UserService {
             throw new EcommerceAppException(ErrorCode.INVALID_PASSWORD, "Password confirmation failed. Account not deleted.");
         }
 
-        int effectedRow = userRepository.deleteUser(user.getId());
+
+        // imple soft delete
+        user.setDeleted(true);
+        user.setDeletedAt(LocalDateTime.now());
+        user.setEnabled(false);
+
+        int effectedRow = refreshTokenRepository.deleteTokensUsingUserId(id);
+        log.info("deleted {} refresh tokens for user id: {}", effectedRow, id);
 
         boolean success = effectedRow > 0;
 
@@ -115,41 +127,15 @@ public class UserService {
         return success;
     }
 
-    /**
-     * Get the currently authenticated user from SecurityContext.
-     */
-    private User getCurrentUser() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new ResourceNotFoundException(ErrorCode.UNAUTHORIZED, "user not authenticated");
-        }
+    @PreAuthorize("hasRole('ADMIN')")
+    public PagedResponse<UserResponse> getAllUsers(int page, int size) {
 
-        Object principal = authentication.getPrincipal();
+        var pageRequest = PageRequest.of(page, size);
 
-        if (!(principal instanceof User)) {
-            log.error("invalid authentication principal type: {}",
-                    principal != null ? principal.getClass().getName() : "null");
-            throw new EcommerceAppException(
-                    ErrorCode.UNAUTHORIZED,
-                    "invalid authentication principal type");
-        }
-
-        return (User) principal;
-    }
-
-
-
-    /**
-     * Check authorization - user can only access their own data.
-     */
-    private void checkUserAuthorization(Long userId) {
-        var currentUser = getCurrentUser();
-
-        if (!currentUser.getId().equals(userId)) {
-            log.warn("unauthorized access occur by user {} to resource of user {}", currentUser.getId(), userId);
-            throw new EcommerceAppException(ErrorCode.UNAUTHORIZED, "you can only access your own profile");
-        }
+        var response = userRepository.findAllByDeleted(false, pageRequest)
+                .map(userMapper::toResponse);
+        return PagedResponse.from(response);
     }
 }
 
