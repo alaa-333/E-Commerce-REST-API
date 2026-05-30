@@ -13,6 +13,7 @@ public enum ErrorCode {
     VALIDATION_FAILED("VAL-001", "Request validation failed", HttpStatus.BAD_REQUEST),
     WEAK_PASSWORD("VAL-002", "password too weak", HttpStatus.BAD_REQUEST),
     INTERNAL_SERVER_ERROR("SYS-001", "An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_PASSWORD("VAL-003", "Invalid password / does not match", HttpStatus.BAD_REQUEST),
 
     // ── Authentication (Auth-XXX) ──
     INVALID_EMAIL_OR_PASSWORD("AUTH-001", "Invalid email or password", HttpStatus.UNAUTHORIZED),
