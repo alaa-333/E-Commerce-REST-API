@@ -28,7 +28,8 @@ public enum ErrorCode {
 
     // ── User (CUS-XXX) ──
     USER_ALREADY_EXIST("CUS-001", "Email already registered", HttpStatus.CONFLICT),
-    USER_NOT_FOUND("CUS-002", "User not found", HttpStatus.NOT_FOUND);
+    USER_NOT_FOUND("CUS-002", "User not found", HttpStatus.NOT_FOUND),
+    CUSTOMER_NOT_FOUND("CUS-003", "Customer not found", HttpStatus.NOT_FOUND);
 
     private final String code;
     private final String message;
