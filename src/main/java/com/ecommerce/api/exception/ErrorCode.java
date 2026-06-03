@@ -29,7 +29,12 @@ public enum ErrorCode {
     // ── User (CUS-XXX) ──
     USER_ALREADY_EXIST("CUS-001", "Email already registered", HttpStatus.CONFLICT),
     USER_NOT_FOUND("CUS-002", "User not found", HttpStatus.NOT_FOUND),
-    CUSTOMER_NOT_FOUND("CUS-003", "Customer not found", HttpStatus.NOT_FOUND);
+    CUSTOMER_NOT_FOUND("CUS-003", "Customer not found", HttpStatus.NOT_FOUND),
+
+    // ── Category (CAT-XXX) ──
+    CATEGORY_ALREADY_EXISTS("CAT-001", "Category with the same name already exists", HttpStatus.CONFLICT),
+    CATEGORY_NOT_FOUND("CAT-002", "Category not found", HttpStatus.NOT_FOUND),
+    CATEGORY_DELETE_FAILED("CAT-003", "Cannot delete category with associated products", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
