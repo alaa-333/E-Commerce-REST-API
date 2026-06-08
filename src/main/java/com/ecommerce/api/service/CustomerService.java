@@ -12,6 +12,8 @@ import com.ecommerce.api.exception.ResourceNotFoundException;
 import com.ecommerce.api.mapper.CustomerMapper;
 import com.ecommerce.api.repository.CustomerRepository;
 import com.ecommerce.api.repository.UserRepository;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -95,5 +97,13 @@ public class CustomerService {
         log.info("customer updated with id: {}", id);
         return true;
 
+    }
+
+    public boolean deleteCustomer(Long id) {
+        var customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.CUSTOMER_NOT_FOUND, "customer not found with id: " + id));
+
+        customerRepository.delete(customer);
+        return true;
     }
 }

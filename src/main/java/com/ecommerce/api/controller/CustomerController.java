@@ -80,5 +80,23 @@ public class CustomerController {
 
     }
 
+    public ResponseEntity<ApiResponse<String>> deleteCustomer(
+            @PathVariable
+            @Positive(message = "id must be a positive value")
+            @NotNull(message = "id must be not null") Long id
+    ) {
+        var responseStatus = customerService.deleteCustomer(id);
+        if (!responseStatus) {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.error("failed to delete customer")
+            );
+        }
+
+        return ResponseEntity.ok(
+                ApiResponse.success("customer deleted successfully")
+        );
+
+    }
+
 
 }
