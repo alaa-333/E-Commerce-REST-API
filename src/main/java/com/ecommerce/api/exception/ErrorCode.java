@@ -34,7 +34,15 @@ public enum ErrorCode {
     // ── Category (CAT-XXX) ──
     CATEGORY_ALREADY_EXISTS("CAT-001", "Category with the same name already exists", HttpStatus.CONFLICT),
     CATEGORY_NOT_FOUND("CAT-002", "Category not found", HttpStatus.NOT_FOUND),
-    CATEGORY_DELETE_FAILED("CAT-003", "Cannot delete category with associated products", HttpStatus.BAD_REQUEST);
+    CATEGORY_DELETE_FAILED("CAT-003", "Cannot delete category with associated products", HttpStatus.BAD_REQUEST),
+
+
+    // ── product (PROD-XXX) ──
+
+    PRODUCT_NOT_FOUND("PROD-001", "Product not found", HttpStatus.NOT_FOUND),
+    PRODUCT_ALREADY_EXISTS("PROD-002", "Product with the same name already exists", HttpStatus.CONFLICT),
+    PRODUCT_DELETE_FAILED("PROD-003", "Cannot delete product that is associated with an order", HttpStatus.BAD_REQUEST);
+
 
     private final String code;
     private final String message;
