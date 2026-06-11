@@ -26,7 +26,7 @@ public class Product extends BaseEntity {
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
     @Column(nullable = false)
-    private Integer stockQuantity;
+    private Integer stockQuantity = 0;
 
     private String imageUrl;
 
