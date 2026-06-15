@@ -42,7 +42,15 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND("PROD-001", "Product not found", HttpStatus.NOT_FOUND),
     PRODUCT_ALREADY_EXISTS("PROD-002", "Product with the same name already exists", HttpStatus.CONFLICT),
     PRODUCT_DELETE_FAILED("PROD-003", "Cannot delete product that is associated with an order", HttpStatus.BAD_REQUEST),
-    PRODUCT_INSUFFICIENT_STOCK("PROD-004", "Insufficient stock available for the requested product", HttpStatus.BAD_REQUEST);
+    PRODUCT_INSUFFICIENT_STOCK("PROD-004", "Insufficient stock available for the requested product", HttpStatus.BAD_REQUEST),
+    PRODUCT_DISABLED("PROD-005", "The requested product is currently unavailable", HttpStatus.BAD_REQUEST),
+
+    // --- cart (CARD-XXX) ---
+    CART_NOT_FOUND("CARD-001", "Cart not found", HttpStatus.NOT_FOUND),
+    CART_ITEM_NOT_FOUND("CARD-002", "Cart item not found", HttpStatus.NOT_FOUND),
+    CART_ITEM_INSUFFICIENT_STOCK("CARD-003", "Insufficient stock available for the requested product in cart", HttpStatus.BAD_REQUEST),
+    CART_ITEM_PRODUCT_NOT_FOUND("CARD-004", "Product not found for the cart item", HttpStatus.NOT_FOUND),
+    CART_ITEM_PRODUCT_DISABLED("CARD-004", "The requested product in cart is currently unavailable", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

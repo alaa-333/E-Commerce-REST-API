@@ -20,4 +20,7 @@ public class Customer extends BaseEntity{
 
     @Embedded
     private Address address;
+
+    @OneToOne(mappedBy = "customer_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
 }
