@@ -57,7 +57,15 @@ public enum ErrorCode {
     WISHLIST_ITEM_NOT_FOUND("WISH-002", "Wishlist item not found", HttpStatus.NOT_FOUND),
     WISHLIST_ITEM_ALREADY_EXISTS("WISH-003", "Product already exists in wishlist", HttpStatus.CONFLICT),
     WISHLIST_ITEM_PRODUCT_NOT_FOUND("WISH-004", "Product not found for the wishlist item", HttpStatus.NOT_FOUND),
-    WISHLIST_ITEM_PRODUCT_DISABLED("WISH-005", "The requested product in wishlist is currently unavailable", HttpStatus.BAD_REQUEST);
+    WISHLIST_ITEM_PRODUCT_DISABLED("WISH-005", "The requested product in wishlist is currently unavailable", HttpStatus.BAD_REQUEST),
+
+    // --- orders (ORD/CRT-XXX) ---
+    // Cart empty when trying to create order
+    // Code CRT-002 used in domain spec for cart empty
+    CART_EMPTY("CRT-002", "Cart is empty", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND("ORD-001", "Order not found", HttpStatus.NOT_FOUND),
+    ORDER_INVALID_STATUS_TRANSITION("ORD-002", "Invalid order status transition", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_NOT_ALLOWED("ORD-003", "Order cannot be cancelled", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
