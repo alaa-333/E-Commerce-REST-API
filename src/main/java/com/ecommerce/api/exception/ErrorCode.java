@@ -65,7 +65,13 @@ public enum ErrorCode {
     CART_EMPTY("CRT-002", "Cart is empty", HttpStatus.BAD_REQUEST),
     ORDER_NOT_FOUND("ORD-001", "Order not found", HttpStatus.NOT_FOUND),
     ORDER_INVALID_STATUS_TRANSITION("ORD-002", "Invalid order status transition", HttpStatus.BAD_REQUEST),
-    ORDER_CANCEL_NOT_ALLOWED("ORD-003", "Order cannot be cancelled", HttpStatus.BAD_REQUEST);
+    ORDER_CANCEL_NOT_ALLOWED("ORD-003", "Order cannot be cancelled", HttpStatus.BAD_REQUEST),
+
+    // --- payments (PAY-XXX) ---
+    PAYMENT_NOT_FOUND("PAY-001", "Payment not found", HttpStatus.NOT_FOUND),
+    PAYMENT_ALREADY_EXISTS("PAY-002", "Payment already exists for this order", HttpStatus.CONFLICT),
+    PAYMENT_FAILED("PAY-003", "Payment processing failed", HttpStatus.BAD_REQUEST),
+    PAYMENT_STRIPE_ERROR("PAY-004", "Stripe payment gateway error", HttpStatus.BAD_GATEWAY);
 
     private final String code;
     private final String message;
