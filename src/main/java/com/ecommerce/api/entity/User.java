@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @Setter
 @Builder
 @Table(name = "users")
-
 @SQLRestriction("deleted = false")
 public class User extends BaseEntity implements UserDetails {
 
