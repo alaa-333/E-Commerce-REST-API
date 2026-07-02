@@ -3,9 +3,11 @@ package com.ecommerce.api.dto.request.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class LoginRequest {
 
     @NotBlank(message = "email can be not empty")
