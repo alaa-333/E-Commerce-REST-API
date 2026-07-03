@@ -1,11 +1,13 @@
 package com.ecommerce.api.dto.request.product;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 
 @Getter
+@Builder
 public class CreateProductRequest {
 
     @NotBlank(message = "Product name is required")
